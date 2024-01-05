@@ -60,7 +60,7 @@ It is possible to change the true properties of a device after it has been insta
     test_pmt: 100.0 4.6118416289470705
 
     >>> test_pmt.set_property('delay', 200.)
-    print('pmt:', test_pmt.get_properties('design')['delay'], test_pmt.get_properties('true')['delay'])
+    print('test_pmt:', test_pmt.get_properties('design')['delay'], test_pmt.get_properties('true')['delay'])
     test_pmt: 100.0 200.0
 ```
 
@@ -77,9 +77,9 @@ coordinate system you want to use as a reference.
     >>> placement = pmt1.get_placement('design', test_mpmt)
     >>> for key in placement:
     ...     print(key, placement[key])
-location [  0.          95.29664979 232.558     ]
-direction_x [1. 0. 0.]
-direction_z [0.         0.29265287 0.95621875]
+    location [  0.          95.29664979 232.558     ]
+    direction_x [1. 0. 0.]
+    direction_z [0.         0.29265287 0.95621875]
 
     >>> from Geometry.WCD import WCD
     >>> wcte = WCD('wcte', kind='WCTE')
@@ -87,9 +87,9 @@ direction_z [0.         0.29265287 0.95621875]
     >>> placement = pmt_43_1.get_placement('design', wcte)
     >>> for key in placement:
     ...     print(key, placement[key])
-location [ 1.11285996e+03  1.92505783e-13 -9.78090146e+02]
-direction_x [ 0. -1.  0.]
-direction_z [-4.69211932e-01 -3.12164882e-16  8.83085592e-01]
+    location [ 1.11285996e+03  1.92505783e-13 -9.78090146e+02]
+    direction_x [ 0. -1.  0.]
+    direction_z [-4.69211932e-01 -3.12164882e-16  8.83085592e-01]
 ```
 
 Other WCD or Supermodule designs can be defined by extending the WCD or SM classes and adding to the 
