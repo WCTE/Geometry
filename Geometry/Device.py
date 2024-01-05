@@ -221,7 +221,7 @@ class Device:
 
                 current_container = current_container.container
 
-        return location, direction_x, direction_z
+        return {'location': location, 'direction_x': direction_x, 'direction_z': direction_z}
 
     def get_circle_points(self, n_point, place_info):
         """Return a list of length n_point space points of the circle in the x-y plane"""
