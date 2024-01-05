@@ -9,10 +9,10 @@ def test_get_wcd():
     directions_z = []
 
     for mpmt in wcte.mpmts:
-        location, direction_x, direction_z = mpmt.get_placement('design', wcte)
-        locations.append(location)
-        directions_x.append(direction_x)
-        directions_z.append(direction_z)
+        p = mpmt.get_placement('design', wcte)
+        locations.append(p['location'])
+        directions_x.append(p['direction_x'])
+        directions_z.append(p['direction_z'])
 
     assert wcte is not None
 

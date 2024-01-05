@@ -6,8 +6,8 @@ def test_get_sm():
     my_sm = SM('my_sm', kind='SSM')
 
     pmt0 = my_sm.mpmts[0].pmts[0]
-    location, direction_x, direction_z = pmt0.get_placement('design')
-    location2, direction_x2, direction_z2 = pmt0.get_placement('design', my_sm.mpmts[0])
+    pd = pmt0.get_placement('design')
+    pdm = pmt0.get_placement('design', my_sm.mpmts[0])
 
     assert my_sm is not None
 
@@ -51,8 +51,8 @@ def test_get_sm2():
     my_sm2 = TestSM('my_sm2', kind='SSM2')
 
     pmt0 = my_sm2.mpmts[0].pmts[0]
-    location, direction_x, direction_z = pmt0.get_placement('design')
-    location2, direction_x2, direction_z2 = pmt0.get_placement('design', my_sm2.mpmts[0])
+    pd = pmt0.get_placement('design')
+    pdm = pmt0.get_placement('design', my_sm2.mpmts[0])
 
     assert my_sm2 is not None
 
@@ -65,10 +65,11 @@ def test_get_smsm():
         for coord in [my_smsm.sms[ism].mpmts[0], my_smsm.sms[ism], my_smsm]:
             for ipmt in range(2):
                 pmt = my_smsm.sms[ism].mpmts[0].pmts[ipmt]
-                location, direction_x, direction_z = pmt.get_placement('design', coord)
-                print(ism, ipmt, location, direction_x, direction_z)
+                p = pmt.get_placement('design', coord)
+                print(ism, ipmt, p)
 
     assert my_smsm is not None
+
 
 def test_get_wall():
     my_wall = SM('wall', kind='wall')
@@ -80,9 +81,9 @@ def test_get_wall():
     directions_z = []
 
     for mpmt in my_wall.mpmts:
-        location, direction_x, direction_z = mpmt.get_placement('design', my_wall)
-        locations.append(location)
-        directions_x.append(direction_x)
-        directions_z.append(direction_z)
+        p = mpmt.get_placement('design', my_wall)
+        locations.append(p['location'])
+        directions_x.append(p['direction_x'])
+        directions_z.append(p['direction_z'])
 
     assert my_wall is not None

@@ -74,17 +74,22 @@ coordinate system you want to use as a reference.
     >>> from Geometry.MPMT import MPMT
     >>> test_mpmt = MPMT('test_mpmt', kind='ME')
     >>> pmt1 = test_mpmt.pmts[1]
-    >>> location, direction_x, direction_z = pmt1.get_placement('design', test_mpmt)
-    >>> print(location, direction_x, direction_z)
-    [  0.          95.29664979 232.558     ] [1. 0. 0.] [0.         0.29265287 0.95621875]
-
+    >>> placement = pmt1.get_placement('design', test_mpmt)
+    >>> for key in placement:
+    ...     print(key, placement[key])
+location [  0.          95.29664979 232.558     ]
+direction_x [1. 0. 0.]
+direction_z [0.         0.29265287 0.95621875]
 
     >>> from Geometry.WCD import WCD
     >>> wcte = WCD('wcte', kind='WCTE')
     >>> pmt_43_1 = wcte.mpmts[43].pmts[1]
-    >>> location, direction_x, direction_z = pmt_43_1.get_placement('design', wcte)
-    >>> print(location, direction_x, direction_z)
-    [ 1.11285996e+03  1.92505783e-13 -9.78090146e+02] [ 0. -1.  0.] [-4.69211932e-01 -3.12164882e-16  8.83085592e-01]
+    >>> placement = pmt_43_1.get_placement('design', wcte)
+    >>> for key in placement:
+    ...     print(key, placement[key])
+location [ 1.11285996e+03  1.92505783e-13 -9.78090146e+02]
+direction_x [ 0. -1.  0.]
+direction_z [-4.69211932e-01 -3.12164882e-16  8.83085592e-01]
 ```
 
 Other WCD or Supermodule designs can be defined by extending the WCD or SM classes and adding to the 
