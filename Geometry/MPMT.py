@@ -230,15 +230,12 @@ class MPMT(Device):
     pmts_design['MI'] = dome_pmts
     leds_design['MI'] = dome_leds
 
-    def get_xy_points(self, place_info, feature='base'):
+    def get_xy_points(self, place_info, feature='base', device_for_coordinate_system=None):
         """Return set of points that shows features on x-y plane (z=0)
         To show feedthrough, set feature='feedthrough'
         To show survey CN hole, set feature='survey_cN' where N is 1, 2, 3, or 4
         """
-        device_place = getattr(self, 'place_' + place_info, None)
-        location = device_place['loc']
 
-        rot = Rotation.from_euler(device_place['rot_axes'], device_place['rot_angles'])
         xy_points = self.base_xy_points
         if feature == 'feedthrough':
             xy_points = self.feedthough_xy_points
@@ -246,12 +243,11 @@ class MPMT(Device):
             n = int(feature[8])
             xy_points = self.survey_holes_xy_points[n - 1]
 
-        points = []
-        for point in xy_points:
-            rotated_point = rot.apply(point)
-            points.append(list(np.add(location, rotated_point)))
+        return self.get_transformed_points(xy_points, place_info, device_for_coordinate_system)
 
-        return points
+    def get_fiducials(self, place_info, device_for_coordinate_system=None):
+        """Return the set of fiducial points for surveying (locations of the corner cube reflectors)"""
+        return self.get_transformed_points(self.fiducials, place_info, device_for_coordinate_system)
 
     def __init__(self, name, container=None, kind='ME', place_design={}, place_true={}):
         super().__init__(MPMT, name, container, kind, place_design, place_true)

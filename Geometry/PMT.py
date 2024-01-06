@@ -60,9 +60,9 @@ class PMT(Device):
     design_scale['P31'] = p31_design_scale
     design_var['P31'] = p31_design_var
 
-    def get_xy_points(self, place_info):
+    def get_xy_points(self, place_info, device_for_coordinate_system=None):
         """Return set of points that shows extent on x-y plane (z=0)"""
-        return self.get_circle_points(20, place_info)
+        return self.get_circle_points(20, place_info, device_for_coordinate_system)
 
     def __init__(self, name, container=None, kind='P3', place_design={}, place_true={}):
         super().__init__(PMT, name, container, kind, place_design, place_true)

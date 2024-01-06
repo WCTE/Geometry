@@ -136,13 +136,9 @@ class Device:
                 devices.append(new_device)
         return devices
 
-    def get_placement(self, place_info, device_for_coordinate_system=None):
-        """Return the location af device and directions of its x and z axes in the coordinate system
-        of the specified container. If the specified container is None, use the coordinate system of
-        the top-level container (typically the WCD).
-        """
+    def get_specified_container(self, device_for_coordinate_system):
+        """Return the specified container: the device whose coordinate system we want to use"""
 
-        # define the specified container: the device whose coordinate system we want to use
         specified_container = device_for_coordinate_system
         if specified_container is None:
             specified_container = self
@@ -150,7 +146,7 @@ class Device:
                 while specified_container.container is not None:
                     specified_container = specified_container.container
 
-        # check that if the device has a container the device is within the specified container (at some higher level)
+        # check that if the device has a container, the device is within the specified container (at some higher level)
         if self.container is not None:
             the_container = self.container
             inside_container = False
@@ -165,6 +161,15 @@ class Device:
                 container_full_name = specified_container.__class__.__name__ + ' ' + specified_container.name
                 raise ValueError('Device: ' + device_full_name + ' is not in the specified container: '
                                  + container_full_name + '.')
+        return specified_container
+
+    def get_placement(self, place_info, device_for_coordinate_system=None):
+        """Return the location af device and directions of its x and z axes in the coordinate system
+        of the specified container. If the specified container is None, use the coordinate system of
+        the top-level container (typically the WCD).
+        """
+
+        specified_container = self.get_specified_container(device_for_coordinate_system)
 
         if self.container is None or self == specified_container:
             # if a device has no container or if the specified container is itself, then it is located at its origin
@@ -223,20 +228,63 @@ class Device:
 
         return {'location': location, 'direction_x': direction_x, 'direction_z': direction_z}
 
-    def get_circle_points(self, n_point, place_info):
+    def get_transformed_points(self, points, place_info, device_for_coordinate_system=None):
+        """Return a set of points transformed to the coordinate system of the specified container.
+        If the specified container is None, use the coordinate system of the top-level container (typically the WCD).
+        """
+
+        specified_container = self.get_specified_container(device_for_coordinate_system)
+
+        if self.container is None or self == specified_container:
+            # if a device has no container or if the specified container is itself, then no transformation is needed
+            return points
+        else:
+            # get the location and orientation of the device in the container's coordinate system
+
+            # place_info is a string: either 'true', 'design', or 'est'
+            device_place = getattr(self, 'place_' + place_info, None)
+            if device_place is None:
+                raise ValueError('Device: ' + self.__class__.__name__ + ' ' + self.name +
+                                 ' has no ' + place_info + 'placement information.')
+
+            transformed_points = []
+            for point in points:
+                location = point
+
+                current_container = self.container
+                # if the current container is not the specified container, then apply the container's placement
+                while current_container != specified_container:
+                    # apply translation and rotation of current_container
+                    container_place = getattr(current_container, 'place_' + place_info, None)
+                    if container_place is None:
+                        raise ValueError('Device: ' + current_container.__class__.__name__ + ' ' + self.name +
+                                         ' has no ' + place_info + 'placement information.')
+                    rot_head = location
+                    if 'rot_axes' in container_place:
+                        rot2 = Rotation.from_euler(container_place['rot_axes'], container_place['rot_angles'])
+                        rot_head = rot2.apply(location)
+
+                    location = np.add(rot_head, container_place.get('loc', [0., 0., 0.]))
+                    current_container = current_container.container
+
+                transformed_points.append(location)
+
+            return transformed_points
+
+    def get_circle_points(self, n_point, place_info, device_for_coordinate_system=None):
         """Return a list of length n_point space points of the circle in the x-y plane"""
         device_prop = getattr(self, 'prop_' + place_info, None)
         radius = device_prop['size'] / 2.
-        location, direction_x, direction_z = self.get_placement(place_info)
+        p = self.get_placement(place_info, device_for_coordinate_system)
 
         # change magnitude of direction_x to device radius
-        perp = np.array(direction_x) * radius
+        perp = np.array(p['direction_x']) * radius
 
         # small rotation about the device z_axis
-        rot = Rotation.from_rotvec(2. * np.pi / n_point * np.array(direction_z))
+        rot = Rotation.from_rotvec(2. * np.pi / n_point * np.array(p['direction_z']))
         points = []
         for i in range(n_point):
-            points.append(list(np.add(location, perp)))
+            points.append(list(np.add(p['location'], perp)))
             perp = rot.apply(perp)
 
         return points
