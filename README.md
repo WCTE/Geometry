@@ -92,13 +92,19 @@ coordinate system you want to use as a reference.
     direction_z [-4.69211932e-01 -3.12164882e-16  8.83085592e-01]
 ```
 
+3D images of the devices can be rendered using the k3d package in a jupyter notebook. Examples notebooks are in the
+examples folder to show 
+ * an MPMT with all its PMTs and LEDs, and baseplate (at z=0) showing the large feedthrough hole
+and survey holes (labelled cn) and locations of the survey fiducial points (labelled fn)
+ * the bottom, wall, and top supermodules of the WCTE, showing the mPMT baseplates, feedthroughs, and fiducial points
+ * the full WCTE with the baseplates
+
 Other WCD or Supermodule designs can be defined by extending the WCD or SM classes and adding to the 
 design dictionaries.
 
 Additional functionality for the devices can be incorporated by extending the device classes. The TimingCalib package
 is an example of this. (TODO: revise TimingCalib package to use this package).
 
-TODO: 
- * add examples to draw pictures of devices and their placements
+TODO:
  * show how to incorporate survey data
 

@@ -140,7 +140,7 @@ class MPMT(Device):
             dome_pmts.append({'name': str(len(dome_pmts)), 'kind': 'P3',
                               'loc': [0., 0., dz_to_pmt0],
                               'loc_sig': [1.0, 1.0, 1.0],
-                              'rot_axes': 'XZ',
+                              'rot_axes': 'xz',
                               'rot_angles': [0., 0.],
                               'rot_angles_sig': [0.01, 0.01]})
         else:
@@ -156,7 +156,7 @@ class MPMT(Device):
                 dome_pmts.append({'name': str(len(dome_pmts)), 'kind': 'P3',
                                   'loc': rot_loc,
                                   'loc_sig': [1.0, 1.0, 1.0],
-                                  'rot_axes': 'XZ',
+                                  'rot_axes': 'xz',
                                   'rot_angles': rot_angles,
                                   'rot_angles_sig': [0.01, 0.01]})
 

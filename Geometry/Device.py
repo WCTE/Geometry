@@ -239,7 +239,7 @@ class Device:
             # if a device has no container or if the specified container is itself, then no transformation is needed
             return points
         else:
-            # get the location and orientation of the device in the container's coordinate system
+            # get the position in the container's coordinate system
 
             # place_info is a string: either 'true', 'design', or 'est'
             device_place = getattr(self, 'place_' + place_info, None)
@@ -249,7 +249,12 @@ class Device:
 
             transformed_points = []
             for point in points:
-                location = point
+                rot_head = point
+                if 'rot_axes' in device_place:
+                    rot = Rotation.from_euler(device_place['rot_axes'], device_place['rot_angles'])
+                    rot_head = rot.apply(point)
+
+                location = np.add(rot_head, device_place.get('loc', [0., 0., 0.]))
 
                 current_container = self.container
                 # if the current container is not the specified container, then apply the container's placement

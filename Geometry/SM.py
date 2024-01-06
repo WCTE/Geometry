@@ -145,7 +145,13 @@ class SM(Device):
             self.sms = None
         elif device_type == SM:
             self.sms = self.place_devices(device_type, self.devices_design, kind)
-            self.mpmts = None
+            # collect all the mpmts in the WCD
+            self.mpmts = []
+            for sm in self.sms:
+                sm.get_mpmts(self.mpmts)
+            # give each mpmt a unique name
+            for i, mpmt in enumerate(self.mpmts):
+                mpmt.name = str(i)
 
     def get_mpmts(self, mpmt_list):
         # recursive discovery of mpmts in super modules
