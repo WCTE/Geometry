@@ -66,9 +66,9 @@ class SM(Device):
             'kind': 'ME',
             'loc': location,
             'loc_sig': loc_sig,
-            'rot_axes': 'z',
-            'rot_angles': (y_rot+0.5) * np.pi,
-            'rot_angles_sig': rot_angle_sig
+            'rot_axes': 'ZYX',
+            'rot_angles': [(y_rot + 0.5) * np.pi, 0., 0.],
+            'rot_angles_sig': [rot_angle_sig] * 3
         })
 
     devices_design['bottom'] = bottom_mpmts
@@ -95,7 +95,7 @@ class SM(Device):
         offsets.append(offset)
 
     # rotate mPMTs to put feed-throughs in correct orientations... pi multiplier
-    #y_rots = [0, 1, 1, 1.5, 1.5, 0, 0, 0.5, 0.5, 1, 1, 1, 1.5, 1.5, 1.5, 0, 0, 0, 0.5, 0.5, 0.5]
+    # y_rots = [0, 1, 1, 1.5, 1.5, 0, 0, 0.5, 0.5, 1, 1, 1, 1.5, 1.5, 1.5, 0, 0, 0, 0.5, 0.5, 0.5]
     y_rots = [0, 1, 1, 0.5, 0.5, 0, 0, 1.5, 1.5, 1, 1, 1, 0.5, 0.5, 0.5, 0, 0, 0, 1.5, 1.5, 1.5]
 
     for offset, y_rot in zip(offsets, y_rots):
@@ -104,9 +104,9 @@ class SM(Device):
             'kind': 'ME',
             'loc': location,
             'loc_sig': loc_sig,
-            'rot_axes': 'z',
-            'rot_angles': (y_rot-0.5) * np.pi,
-            'rot_angles_sig': rot_angle_sig
+            'rot_axes': 'ZYX',
+            'rot_angles': [(y_rot - 0.5) * np.pi, 0., 0.],
+            'rot_angles_sig': [rot_angle_sig] * 3
         })
 
     devices_design['top'] = top_mpmts
@@ -132,7 +132,7 @@ class SM(Device):
                                'loc_sig': loc_sig,
                                'rot_axes': 'ZYX',
                                'rot_angles': rot_angles,
-                               'rot_angles_sig': [rot_angle_sig]*3})
+                               'rot_angles_sig': [rot_angle_sig] * 3})
 
     devices_design['wall'] = wall_mpmts
 
