@@ -178,9 +178,9 @@ class MPMT(Device):
 
     for i_row, number in enumerate(led_number_by_row):
         if i_row == 0:
-            kind = 'L1'
+            kind = 'LC'
         else:
-            kind = 'L2'
+            kind = 'LD'
 
         # azimuthal angle of first LED hole in row
         phi_0 = np.arctan2(led_ym_by_row[i_row], led_xm_by_row[i_row])
