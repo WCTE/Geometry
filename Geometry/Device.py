@@ -1,3 +1,7 @@
+import pickle
+import json
+import datetime
+from pathlib import Path
 import numpy as np
 from scipy import stats
 from scipy.spatial.transform import Rotation
@@ -23,7 +27,7 @@ class Device:
             .prop_est_sig: standard deviation of property estimators
             .prop_prior: prior property estimates (TBD)
             .prop_prior_sig: standard deviation of priors (TBD)
-        - placement dictionaries (for devices that hold other devices, such as mPMTs):
+        - placement dictionaries (specified in the coordinate system of its container):
             .place_design: intended placements (read-only)
             .place_true: placement used in simulation (read-only)
             .place_survey: placement as measured by survey
@@ -226,7 +230,7 @@ class Device:
 
                 current_container = current_container.container
 
-        return {'location': location, 'direction_x': direction_x, 'direction_z': direction_z}
+        return {'location': list(location), 'direction_x': list(direction_x), 'direction_z': list(direction_z)}
 
     def get_transformed_points(self, points, place_info, device_for_coordinate_system=None):
         """Return a set of points transformed to the coordinate system of the specified container.
@@ -293,3 +297,150 @@ class Device:
             perp = rot.apply(perp)
 
         return points
+
+    def save_json(self, filename, prop_info='design', place_info='design', devices='mpmts', device_for_coordinate_system=None):
+        """Save the properties and/or placements of all the devices of type device_type contained in the device
+        to a json formatted file
+
+        If no extension is provided, the default extension, .json is added.
+
+        Parameters
+        ----------
+        filename : Path or str
+            name of file to save device
+        prop_info : str
+            'design', 'true', or 'est' : type of property information to save
+            None : do not save properties
+        place_info : str
+            'design', 'true', 'survey', 'photo', or 'est' : type of placement information to save
+            None : do not save placements
+        devices : str
+            'mpmts', 'pmts', 'leds', or 'all' (comma delimited): type(s) of devices to save
+        device_for_coordinate_system : Device
+            device whose coordinate system is used to define the placement of the device
+            If None, use the coordinate system of the top-level container (typically the WCD or room).
+
+        Returns
+        -------
+        None.
+
+        """
+
+        info = {}
+        description = {'Date created': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                       'Device name': self.name,
+                       'prop_info': prop_info if prop_info is not None else 'None',
+                       'place_info': place_info if place_info is not None else 'None',
+                       'devices': devices,
+                       'device_for_coordinate_system': device_for_coordinate_system.name if device_for_coordinate_system is not None else 'None'
+                       }
+        info['description'] = description
+
+        # examine all mPMTs:
+        if getattr(self, 'mpmts', None) is not None:
+            mpmt_info = {}
+            for mpmt in self.mpmts:
+                mpmt_data = {'name': 'MPMT ' + mpmt.name}
+                if 'mpmt' in devices or 'all' in devices:
+                    if prop_info is not None:
+                        mpmt_data['properties'] = mpmt.get_properties(prop_info)
+                    if place_info is not None:
+                        mpmt_data['placement'] = mpmt.get_placement(place_info, device_for_coordinate_system)
+                if getattr(mpmt, 'pmts', None) is not None and ('pmts' in devices or 'all' in devices):
+                    pmt_info = {}
+                    for pmt in mpmt.pmts:
+                        pmt_data = {'name': 'PMT ' + pmt.name}
+                        if prop_info is not None:
+                            pmt_data['properties'] = pmt.get_properties(prop_info)
+                        if place_info is not None:
+                            pmt_data['placement'] = pmt.get_placement(place_info, device_for_coordinate_system)
+                        pmt_info[pmt.name] = pmt_data
+                    mpmt_data['pmts'] = pmt_info
+                if getattr(mpmt, 'leds', None) is not None and ('leds' in devices or 'all' in devices):
+                    led_info = {}
+                    for led in mpmt.leds:
+                        led_data = {'name': 'LED ' + led.name}
+                        if prop_info is not None:
+                            led_data['properties'] = led.get_properties(prop_info)
+                        if place_info is not None:
+                            led_data['placement'] = led.get_placement(place_info, device_for_coordinate_system)
+                        led_info[led.name] = led_data
+                    mpmt_data['leds'] = led_info
+
+                mpmt_info[mpmt.name] = mpmt_data
+
+            info['mpmts'] = mpmt_info
+
+        try:
+            filepath = Path(filename).resolve()
+        except:
+            raise TypeError('Input arg could not be converted to a valid path: {}' +
+                            '\n It must be a str or Path-like.'.format(filename))
+
+        if len(filepath.suffix) < 2:
+            filepath = filepath.with_suffix('.json')
+
+        with open(filepath, 'w') as f:
+            json.dump(info, f, indent=2)
+
+    def save_file(self, filename):
+        """
+        Save a copy of the current device to a file. The device can be restored
+        at a late time using Device.open_file(filename).
+
+        If no extension is provided, the default extension, .geo is added.
+
+        Parameters
+        ----------
+        filename : Path or str
+            name of file to save device
+
+        Returns
+        -------
+        None.
+
+        """
+
+        try:
+            filepath = Path(filename).resolve()
+        except:
+            raise TypeError('Input arg could not be converted to a valid path: {}' +
+                            '\n It must be a str or Path-like.'.format(filename))
+
+        if len(filepath.suffix) < 2:
+            filepath = filepath.with_suffix('.geo')
+
+        with open(filepath, 'wb') as f:
+            pickle.dump(self, f, protocol=4)
+
+    @classmethod
+    def open_file(cls, filepath):
+        """
+        Restore a device that was saved to a file using Device.save_file(filename)
+
+        Parameters
+        ----------
+        filepath : Path or str
+            name of existing device file to open
+
+        Returns
+        -------
+        Device
+            The device object saved in the file
+
+        """
+
+        try:
+            filepath = Path(filepath).resolve()
+        except:
+            raise TypeError('Input arg could not be converted to a valid path: {}' +
+                            '\n It must be a str or Path-like.'.format(filepath))
+
+        if len(filepath.suffix) < 2:
+            filepath = filepath.with_suffix('.geo')
+
+        if not filepath.exists():
+            raise ValueError('Filepath does not exist: {}'.format(filepath))
+
+        with open(filepath, 'rb') as f:
+            return pickle.load(f)

@@ -92,6 +92,33 @@ coordinate system you want to use as a reference.
     direction_z [-4.69211932e-01 -3.12164882e-16  8.83085592e-01]
 ```
 
+Any device object can be serialized, saving all geometry information for that device and all devices it contains, by
+calling the `save_file` method with the desired filename as an argument. The device object can be reconstructed 
+later by calling the `open_file` method with the same filename as an argument. Recommended to use `.geo` as the file
+extension. A set of `.geo` files could act as a historical record of earlier designs, or the files can be used as 
+reference instances of a device in simulation studies. The file format is a pickle of the device object.
+
+```python
+    >>> wcte.save_file('wcte_v11.geo')
+
+    >>> from Geometry.Device import Device
+    >>> wcte_v11 = Device.open_file('wcte_v11.geo')
+    >>> pmt_43_1 = wcte_v11.mpmts[43].pmts[1]
+    >>> placement = pmt_43_1.get_placement('design', wcte)
+```
+
+Alternatively, property and placement information for a device (and the devices it contains) can be saved in a json
+formatted file using the `save_json` method with the desired filename as an argument. This would be convenient for 
+accessing geometry information in other languages.
+
+```python
+    >>> wcte.save_json('wcte_v11.json', prop_info='design', place_info='design', devices='mpmts'))
+
+    >>> import json
+    >>> info = json.load(open('wcte_v11.json'))
+    >>> placement = info['mpmts']['43']['leds']['3']['placement']
+```
+
 Images of the devices can be rendered in 3D. Example jupyter notebooks, using the k3d package, in the
 examples folder show
  * an MPMT with all its PMTs and LEDs, and baseplate (at z=0) showing the large feedthrough hole
