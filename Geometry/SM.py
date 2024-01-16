@@ -31,8 +31,8 @@ class SM(Device):
     # surveys. Once assembled the WCTE z-axis is aligned with the beam direction
 
     tb_pitch = 580.  # mm separation of mPMT centres on top and bottom (x and y the same)
-    wcte_diameter = 3422.166  # mm separation of mPMT baseplates on opposite wall locations
-    wall_vertical_pitch = 580.  # mm separation of mPMT centres for rows
+    wcte_diameter = 3422.166  # mm separation of mPMT baseplates on opposite barrel locations
+    barrel_vertical_pitch = 580.  # mm separation of mPMT centres for rows
 
     loc_sig = [1.0, 1.0, 1.0]  # mm positioning accuracy
     rot_angle_sig = 0.01  # radians
@@ -111,30 +111,30 @@ class SM(Device):
 
     devices_design['top'] = top_mpmts
 
-    # Wall super module:
+    # Barrel super module:
     ####################
     # Origin on cylinder axis, z-axis along that axis, z=0 at centre of second from bottom row of
     # mPMTs. Ordering of mPMTs increases with phi. Second mPMT is displaced along SM +x axis.
 
-    wall_mpmts = []
+    barrel_mpmts = []
 
     n_col = 16
     for i_row in range(-1, 3):
-        loc = [wcte_diameter / 2., 0., i_row * wall_vertical_pitch]
+        loc = [wcte_diameter / 2., 0., i_row * barrel_vertical_pitch]
         for j_col in range(n_col):
             phi_angle = 2. * np.pi * j_col / n_col
             rot_phi = Rotation.from_euler('Z', phi_angle)
             rot_loc = rot_phi.apply(loc)
             # rotations of the normal defined by 3 extrinsic rotations
             rot_angles = [np.pi, np.pi / 2., -phi_angle]
-            wall_mpmts.append({'kind': 'ME',
+            barrel_mpmts.append({'kind': 'ME',
                                'loc': rot_loc,
                                'loc_sig': loc_sig,
                                'rot_axes': 'ZYX',
                                'rot_angles': rot_angles,
                                'rot_angles_sig': [rot_angle_sig] * 3})
 
-    devices_design['wall'] = wall_mpmts
+    devices_design['barrel'] = barrel_mpmts
 
     def __init__(self, name, container=None, kind='SSM', place_design={}, place_true={}, device_type=MPMT):
         super().__init__(SM, name, container, kind, place_design, place_true)

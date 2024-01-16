@@ -5,7 +5,7 @@ properties:
     - mpmts: an array of MPMTs (defined if the WCD is made of MPMTs or Super Modules)
     - sms: an array of Super Modules (defined if the WCD is made of Super Modules)
 
-The WCTE is constructed from 3 Super Modules (bottom, wall, top) and has a cartesian coordinate system with its origin
+The WCTE is constructed from 3 Super Modules (bottom, barrel, top) and has a cartesian coordinate system with its origin
 at the location where the beam intersects the cylinder axis. The beam follows the "z" direction and "y" direction
 is pointing up.
 """
@@ -149,11 +149,11 @@ class WCD(Device):
     prop_scale['WCTE'] = wcte_prop_scale
     prop_var['WCTE'] = wcte_prop_var
 
-    # The WCTE has 4 rows of wall mPMTs, with the beam window on the second row from bottom
+    # The WCTE has 4 rows of barrel mPMTs, with the beam window on the second row from bottom
     # Use the centre of the beam window as the height, y = 0
     # Separation of top and bottom = 3060.475 mm
-    # wcte_bottom: -1 * (half of mPMT baseplate width + wall_vertical_pitch + 261.475 mm) = -(528/2. + 580 + 261.475)
-    # wcte_top: half of mPMT baseplate width + 2*wall_vertical_pitch + 531 mm = 528/2. + 2*580 + 531 = 1955 mm
+    # wcte_bottom: -1 * (half of mPMT baseplate width + barrel_vertical_pitch + 261.475 mm) = -(528/2. + 580 + 261.475)
+    # wcte_top: half of mPMT baseplate width + 2*barrel_vertical_pitch + 531 mm = 528/2. + 2*580 + 531 = 1955 mm
 
     wcte_top = 1955.  # mm y coordinate of mPMT base plates on top endcap
     wcte_bottom = -1105.475  # mm y coordinate of mPMT base plates on bottom endcap
@@ -170,7 +170,7 @@ class WCD(Device):
                      'rot_angles': [-np.pi / 2., -np.pi / 2.],
                      'rot_angles_sig': [0.01, 0.01]})
 
-    wcte_sms.append({'name': 'wall', 'kind': 'wall',
+    wcte_sms.append({'name': 'barrel', 'kind': 'barrel',
                      'loc': [0., 0., 0.],
                      'loc_sig': [1.0, 1.0, 1.0],
                      'rot_axes': 'xy',

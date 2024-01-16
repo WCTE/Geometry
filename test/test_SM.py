@@ -71,19 +71,19 @@ def test_get_smsm():
     assert my_smsm is not None
 
 
-def test_get_wall():
-    my_wall = SM('wall', kind='wall')
+def test_get_barrel():
+    my_barrel = SM('barrel', kind='barrel')
     mpmt_list = []
-    my_wall.get_mpmts(mpmt_list)
+    my_barrel.get_mpmts(mpmt_list)
 
     locations = []
     directions_x = []
     directions_z = []
 
-    for mpmt in my_wall.mpmts:
-        p = mpmt.get_placement('design', my_wall)
+    for mpmt in my_barrel.mpmts:
+        p = mpmt.get_placement('design', my_barrel)
         locations.append(p['location'])
         directions_x.append(p['direction_x'])
         directions_z.append(p['direction_z'])
 
-    assert my_wall is not None
+    assert my_barrel is not None

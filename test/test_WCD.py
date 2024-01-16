@@ -1,4 +1,5 @@
 from Geometry.WCD import WCD
+import json
 
 
 def test_get_wcd():
@@ -17,5 +18,16 @@ def test_get_wcd():
     assert wcte is not None
 
 
-def test_wcd():
-    assert False
+def test_wcd_json():
+    wcte = WCD('wcte', kind='WCTE')
+
+    wcte.save_json('wcte_design.json', 'design', 'design', devices='all')
+
+    assert wcte is not None
+
+def test_wcd_json_load():
+    info = json.load(open('wcte_design.json'))
+
+    p = info['mpmts']['43']['leds']['3']['placement']
+
+    assert info is not None

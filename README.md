@@ -8,14 +8,14 @@ be used to define the global coordinate system.
 
 The table below shows the active elements, which are classes that inherit from the `Device` class:
 
-| Class | Device                                | Kinds currently implemented                             |
-|:------|:--------------------------------------|:--------------------------------------------------------|
-| WCD   | Water Cherenkov Detector              | WCTE: full detector                                     |
-| SM    | Super Module (several mPMTs combined) | SSM: simple super module as basis of mPMT test setup    |
-|       |                                       | bottom, top, wall : super modules that make up the WCTE |
-| MPMT  | Multi-PMT module                      | ME: ex-situ, MI: in-situ, MR: rectangular (for testing) |
-| PMT   | Photomultiplier Tube                  | P3: normal 3 inch PMT                                   |
-| LED   | Light Emitting Diode                  | LD: diffuse, LC: collimated                             |
+| Class | Device                                | Kinds currently implemented                               |
+|:------|:--------------------------------------|:----------------------------------------------------------|
+| WCD   | Water Cherenkov Detector              | WCTE: full detector                                       |
+| SM    | Super Module (several mPMTs combined) | SSM: simple super module as basis of mPMT test setup      |
+|       |                                       | bottom, top, barrel : super modules that make up the WCTE |
+| MPMT  | Multi-PMT module                      | ME: ex-situ, MI: in-situ, MR: rectangular (for testing)   |
+| PMT   | Photomultiplier Tube                  | P3: normal 3 inch PMT                                     |
+| LED   | Light Emitting Diode                  | LD: diffuse, LC: collimated                               |
 
 To allow extended functionality beyond geometry, the `Device` class also includes properties.
 Class dictionaries of dictionaries store design properties of different kinds of devices, first indexed by the 
@@ -123,7 +123,7 @@ Images of the devices can be rendered in 3D. Example jupyter notebooks, using th
 examples folder show
  * an MPMT with all its PMTs and LEDs, and baseplate (at z=0) showing the large feedthrough hole
 and survey holes (labelled cn) and locations of the survey fiducial points (labelled fn)
- * the bottom, wall, and top supermodules of the WCTE, showing the mPMT baseplates, feedthroughs, and fiducial points
+ * the bottom, barrel, and top supermodules of the WCTE, showing the mPMT baseplates, feedthroughs, and fiducial points
  * the full WCTE with all MPMT baseplates
 
 Also in the examples folder is a jupyter notebook showing how to use the Geometry package to analyze simulated
