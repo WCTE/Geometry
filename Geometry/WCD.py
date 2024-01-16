@@ -159,30 +159,30 @@ class WCD(Device):
     wcte_bottom = -1105.475  # mm y coordinate of mPMT base plates on bottom endcap
 
     loc_sig = [1.0, 1.0, 1.0]  # mm positioning accuracy
-    rot_angles_sig = [0.001, 0.001, 0.001]  # rad rotational angle positioning accuracy
+    rot_angles_sig = [0.01, 0.01, 0.01]  # rad rotational angle positioning accuracy
 
     wcte_sms = []
 
     wcte_sms.append({'name': 'bottom', 'kind': 'bottom',
                      'loc': [0., wcte_bottom, 0.],
-                     'loc_sig': [1.0, 1.0, 1.0],
-                     'rot_axes': 'xy',
-                     'rot_angles': [-np.pi / 2., -np.pi / 2.],
-                     'rot_angles_sig': [0.01, 0.01]})
+                     'loc_sig': loc_sig,
+                     'rot_axes': 'ZYX',
+                     'rot_angles': [-np.pi / 2., -np.pi / 2., 0.],
+                     'rot_angles_sig': rot_angles_sig})
 
     wcte_sms.append({'name': 'barrel', 'kind': 'barrel',
                      'loc': [0., 0., 0.],
-                     'loc_sig': [1.0, 1.0, 1.0],
-                     'rot_axes': 'xy',
-                     'rot_angles': [-np.pi / 2., -np.pi / 2.],
-                     'rot_angles_sig': [0.01, 0.01]})
+                     'loc_sig': loc_sig,
+                     'rot_axes': 'ZYX',
+                     'rot_angles': [-np.pi / 2., -np.pi / 2., 0.],
+                     'rot_angles_sig': rot_angles_sig})
 
     wcte_sms.append({'name': 'top', 'kind': 'top',
                      'loc': [0., wcte_top, 0.],
-                     'loc_sig': [1.0, 1.0, 1.0],
-                     'rot_axes': 'xy',
-                     'rot_angles': [np.pi / 2., -np.pi / 2.],
-                     'rot_angles_sig': [0.01, 0.01]})
+                     'loc_sig': loc_sig,
+                     'rot_axes': 'ZYX',
+                     'rot_angles': [-np.pi / 2., -np.pi / 2., 0.],
+                     'rot_angles_sig': rot_angles_sig})
 
     sms_design['WCTE'] = wcte_sms
 

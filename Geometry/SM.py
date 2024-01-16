@@ -75,28 +75,12 @@ class SM(Device):
 
     # Top super module:
     ###################
-    # Origin and z-axis coincides with that of centre mPMT origin.
-    # Ordering of MPTs DECREASES with phi (as it will be flipped compared to bottom).
+    # Constructed with the mPMTs z-axes pointing downwards, unlike the bottom super module.
     # Second mPMT is displaced along SM +x axis.
 
     top_mpmts = []
 
-    # Start with mPMT at centre of top SM
-    offsets = [[0., 0., 0.]]
-
-    offs = [-tb_pitch, 0, tb_pitch]
-    for i in range(8):
-        offset = [offs[[2, 2, 1, 0, 0, 0, 1, 2][i]], offs[[1, 0, 0, 0, 1, 2, 2, 2][i]], 0.]
-        offsets.append(offset)
-
-    offs = [-2. * tb_pitch, -tb_pitch, 0, tb_pitch, 2. * tb_pitch]
-    for i in range(12):
-        offset = [offs[[4, 4, 3, 2, 1, 0, 0, 0, 1, 2, 3, 4][i]], offs[[2, 1, 0, 0, 0, 1, 2, 3, 4, 4, 4, 3][i]], 0.]
-        offsets.append(offset)
-
-    # rotate mPMTs to put feed-throughs in correct orientations... pi multiplier
-    # y_rots = [0, 1, 1, 1.5, 1.5, 0, 0, 0.5, 0.5, 1, 1, 1, 1.5, 1.5, 1.5, 0, 0, 0, 0.5, 0.5, 0.5]
-    y_rots = [0, 1, 1, 0.5, 0.5, 0, 0, 1.5, 1.5, 1, 1, 1, 0.5, 0.5, 0.5, 0, 0, 0, 1.5, 1.5, 1.5]
+    y_rots = [0, 1, 1, 1.5, 1.5, 0, 0, 0.5, 0.5, 1, 1, 1, 1.5, 1.5, 1.5, 0, 0, 0, 0.5, 0.5, 0.5]
 
     for offset, y_rot in zip(offsets, y_rots):
         location = offset
@@ -105,7 +89,7 @@ class SM(Device):
             'loc': location,
             'loc_sig': loc_sig,
             'rot_axes': 'ZYX',
-            'rot_angles': [(y_rot - 0.5) * np.pi, 0., 0.],
+            'rot_angles': [(y_rot - 0.5) * np.pi, np.pi, 0.],
             'rot_angles_sig': [rot_angle_sig] * 3
         })
 
