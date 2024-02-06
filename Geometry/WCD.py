@@ -193,6 +193,7 @@ class WCD(Device):
         if device_type == MPMT:
             self.mpmts = self.place_devices(device_type, self.mpmts_design, kind)
             self.sms = None
+            self.cameras = None
         elif device_type == SM:
             self.sms = self.place_devices(device_type, self.sms_design, kind)
             # collect all the mpmts in the WCD
@@ -202,3 +203,10 @@ class WCD(Device):
             # give each mpmt a unique name
             for i, mpmt in enumerate(self.mpmts):
                 mpmt.name = str(i)
+            # collect all the cameras in the WCD
+            self.cameras = []
+            for sm in self.sms:
+                sm.get_cameras(self.cameras)
+            # give each camera a unique name
+            for i, camera in enumerate(self.cameras):
+                camera.name = str(i)

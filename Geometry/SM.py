@@ -1,5 +1,6 @@
 from Geometry.Device import Device
 from Geometry.MPMT import MPMT
+from Geometry.CAMERA import CAMERA
 
 import numpy as np
 from scipy.spatial.transform import Rotation
@@ -7,11 +8,13 @@ from scipy.spatial.transform import Rotation
 
 class SM(Device):
     """A super module consists of a set of either mPMTs or super modules.
-    It only has geometry information, no other properties.
+    It can also contain cameras. It only has geometry information, no other properties.
     """
 
     # A dictionary of device kinds and placements in the super module:
     devices_design = {}
+    # A dictionary of camera kinds and placements in the super module:
+    cameras_design = {}
 
     ssm_mpmts = []
     # 3 x 2 rectangular pattern of MPMTs (for testing):
@@ -25,6 +28,19 @@ class SM(Device):
                               'rot_angles_sig': [0.01, 0.01]})
 
     devices_design['SSM'] = ssm_mpmts
+
+    ssm_cameras = []
+    # 2 x 2 rectangular pattern of CAMERAs (for testing):
+    for i in np.arange(-0.5, 0.51, 1.0):
+        for j in np.arange(-0.5, 0.51, 1.0):
+            ssm_cameras.append({'name': str(len(ssm_cameras)), 'kind': 'C',
+                                'loc': [600. * i, 600. * (j + 0.5), -100., ],
+                                'loc_sig': [1.0, 1.0, 1.0],
+                                'rot_axes': 'XZ',
+                                'rot_angles': [0., 0.],
+                                'rot_angles_sig': [0.01, 0.01]})
+
+    cameras_design['SSM'] = ssm_cameras
 
     # Super modules that make up the WCTE WCD:
     # The z-axis for each super module is pointing upwards during each super module construction and their initial
@@ -73,6 +89,32 @@ class SM(Device):
 
     devices_design['bottom'] = bottom_mpmts
 
+    bottom_cameras = []
+    # located at 4 corners of bottom super module
+    # they are movable: for now, a typical location is given (same for all)
+    camera_radius = 990 * np.sqrt(2)  # typically 990 mm transverse from centre
+    camera_z_bot = 200.  # typically 200 mm
+    camera_angle = 0.92729  # radians (sin(0.92729) = 0.8)
+
+    for i_cam in range(4):
+        # start with a camera located on the bottom endcap x axis
+        loc = [camera_radius, 0., camera_z_bot]
+        # now rotate it around the bottom endcap z axis
+        phi_angle = np.pi / 4. + 2. * np.pi * i_cam / 4
+        rot_phi = Rotation.from_euler('Z', phi_angle)
+        rot_loc = rot_phi.apply(loc)
+        # rotations of the normal defined by 2 extrinsic rotations
+        rot_angles = [phi_angle + np.pi/2., 0., -camera_angle]
+
+        bottom_cameras.append({'name': str(i_cam), 'kind': 'C',
+                               'loc': rot_loc,
+                               'loc_sig': [1.0, 1.0, 1.0],
+                               'rot_axes': 'ZYX',
+                               'rot_angles': rot_angles,
+                               'rot_angles_sig': [rot_angle_sig] * 3})
+
+    cameras_design['bottom'] = bottom_cameras
+
     # Top super module:
     ###################
     # Constructed with the mPMTs z-axes pointing downwards, unlike the bottom super module.
@@ -95,6 +137,29 @@ class SM(Device):
 
     devices_design['top'] = top_mpmts
 
+    top_cameras = []
+    # located at 4 corners of top super module
+    camera_z_top = 270.  # typically 270 mm
+
+    for i_cam in range(4):
+        # start with a camera located on the bottom endcap x axis
+        loc = [camera_radius, 0., -camera_z_top]
+        # now rotate it around the bottom endcap z axis
+        phi_angle = np.pi / 4. + 2. * np.pi * i_cam / 4
+        rot_phi = Rotation.from_euler('Z', phi_angle)
+        rot_loc = rot_phi.apply(loc)
+        # rotations of the normal defined by 2 extrinsic rotations
+        rot_angles = [phi_angle + np.pi/2., 0., -np.pi/2. - camera_angle]
+
+        top_cameras.append({'name': str(i_cam+4), 'kind': 'C',
+                            'loc': rot_loc,
+                            'loc_sig': [1.0, 1.0, 1.0],
+                            'rot_axes': 'ZYX',
+                            'rot_angles': rot_angles,
+                            'rot_angles_sig': [rot_angle_sig] * 3})
+
+    cameras_design['top'] = top_cameras
+
     # Barrel super module:
     ####################
     # Origin on cylinder axis, z-axis along that axis, z=0 at centre of second from bottom row of
@@ -112,11 +177,11 @@ class SM(Device):
             # rotations of the normal defined by 3 extrinsic rotations
             rot_angles = [np.pi, np.pi / 2., -phi_angle]
             barrel_mpmts.append({'kind': 'ME',
-                               'loc': rot_loc,
-                               'loc_sig': loc_sig,
-                               'rot_axes': 'ZYX',
-                               'rot_angles': rot_angles,
-                               'rot_angles_sig': [rot_angle_sig] * 3})
+                                 'loc': rot_loc,
+                                 'loc_sig': loc_sig,
+                                 'rot_axes': 'ZYX',
+                                 'rot_angles': rot_angles,
+                                 'rot_angles_sig': [rot_angle_sig] * 3})
 
     devices_design['barrel'] = barrel_mpmts
 
@@ -137,6 +202,11 @@ class SM(Device):
             for i, mpmt in enumerate(self.mpmts):
                 mpmt.name = str(i)
 
+        # create and place the set of cameras
+        self.cameras = None
+        if self.cameras_design.get(kind, None) is not None:
+            self.cameras = self.place_devices(CAMERA, self.cameras_design, kind)
+
     def get_mpmts(self, mpmt_list):
         # recursive discovery of mpmts in super modules
         if self.mpmts is None:
@@ -144,3 +214,12 @@ class SM(Device):
                 sm.get_mpmts(mpmt_list)
         else:
             mpmt_list.extend(self.mpmts)
+
+    def get_cameras(self, camera_list):
+        # recursive discovery of cameras in super modules
+        if self.sms is not None:
+            for sm in self.sms:
+                sm.get_cameras(camera_list)
+        else:
+            if self.cameras is not None:
+                camera_list.extend(self.cameras)

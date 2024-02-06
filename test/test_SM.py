@@ -87,3 +87,20 @@ def test_get_barrel():
         directions_z.append(p['direction_z'])
 
     assert my_barrel is not None
+
+def test_get_bottom():
+    my_bottom = SM('bottom', kind='bottom')
+    camera_list = []
+    my_bottom.get_cameras(camera_list)
+
+    locations = []
+    directions_x = []
+    directions_z = []
+
+    for camera in my_bottom.cameras:
+        p = camera.get_placement('design', my_bottom)
+        locations.append(p['location'])
+        directions_x.append(p['direction_x'])
+        directions_z.append(p['direction_z'])
+
+    assert my_bottom is not None
