@@ -17,6 +17,7 @@ The table below shows the active elements, which are classes that inherit from t
 | PMT   | Photomultiplier Tube                  | P3: normal 3 inch PMT                                     |
 | LED   | Light Emitting Diode                  | LD: diffuse, LC: collimated                               |
 | CAMERA | Camera                               | C: camera for WCTE                                        |
+
 To allow extended functionality beyond geometry, the `Device` class also includes properties.
 Class dictionaries of dictionaries store design properties of different kinds of devices, first indexed by the 
 specific "kind" of that device, then by property name. 
