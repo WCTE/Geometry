@@ -1,6 +1,7 @@
 from Geometry.Device import Device
 from Geometry.MPMT import MPMT
 from Geometry.CAMERA import CAMERA
+from Geometry.TARGET import TARGET
 
 import numpy as np
 from scipy.spatial.transform import Rotation
@@ -8,13 +9,15 @@ from scipy.spatial.transform import Rotation
 
 class SM(Device):
     """A super module consists of a set of either mPMTs or super modules.
-    It can also contain cameras. It only has geometry information, no other properties.
+    It can also contain cameras and targets. It only has geometry information, no other properties.
     """
 
     # A dictionary of device kinds and placements in the super module:
     devices_design = {}
     # A dictionary of camera kinds and placements in the super module:
     cameras_design = {}
+    # A dictionary of target kinds and placements in the super module:
+    targets_design = {}
 
     ssm_mpmts = []
     # 3 x 2 rectangular pattern of MPMTs (for testing):
@@ -103,8 +106,8 @@ class SM(Device):
         phi_angle = np.pi / 4. + 2. * np.pi * i_cam / 4
         rot_phi = Rotation.from_euler('Z', phi_angle)
         rot_loc = rot_phi.apply(loc)
-        # rotations of the normal defined by 2 extrinsic rotations
-        rot_angles = [phi_angle + np.pi/2., 0., -camera_angle]
+        # rotations of the normal defined by 3 rotations
+        rot_angles = [phi_angle + np.pi / 2., 0., -camera_angle]
 
         bottom_cameras.append({'name': str(i_cam), 'kind': 'C',
                                'loc': rot_loc,
@@ -114,6 +117,63 @@ class SM(Device):
                                'rot_angles_sig': [rot_angle_sig] * 3})
 
     cameras_design['bottom'] = bottom_cameras
+
+    bottom_targets = []
+    # located at a point extending from the support beams of bottom super module
+    # they are not to be used to define the coordinate system of the super module
+    # instead, they serve as references for determining the placement of the super module after full assembly
+    z_inner_top = -20.  # mm of the inner top surface of the support beams
+    height_inner_beam = 110.  # mm height of the inner volume of the support beams
+    dist_mpmt_to_beam_centre = 267.5 + 45. / 2.  # mm distance from an mPMT to the centre of the support beam
+    width_outer_beam = 45.  # mm width of the outer surface of the support beams
+    length_beams = [1920., 3030., 3570.]  # lengths of the small, medium, and long beams
+    target_extension = 20.  # mm extension of the target from the end of the support beams
+
+    target_z = z_inner_top - height_inner_beam / 2.
+    target_xs = [length_beams[2] / 2. + target_extension,
+                 2. * tb_pitch + dist_mpmt_to_beam_centre,
+                 1. * tb_pitch + dist_mpmt_to_beam_centre,
+                 dist_mpmt_to_beam_centre,
+                 -dist_mpmt_to_beam_centre,
+                 -1. * tb_pitch - dist_mpmt_to_beam_centre,
+                 -2. * tb_pitch - dist_mpmt_to_beam_centre,
+                 -length_beams[2] / 2. - target_extension,
+                 -length_beams[2] / 2. - target_extension,
+                 -2. * tb_pitch - dist_mpmt_to_beam_centre,
+                 -1. * tb_pitch - dist_mpmt_to_beam_centre,
+                 -dist_mpmt_to_beam_centre,
+                 dist_mpmt_to_beam_centre,
+                 1. * tb_pitch + dist_mpmt_to_beam_centre,
+                 2. * tb_pitch + dist_mpmt_to_beam_centre,
+                 length_beams[2] / 2. + target_extension]
+    target_ys = [dist_mpmt_to_beam_centre,
+                 length_beams[0] / 2. + target_extension,
+                 length_beams[1] / 2. + target_extension,
+                 length_beams[2] / 2. + target_extension,
+                 length_beams[2] / 2. + target_extension,
+                 length_beams[1] / 2. + target_extension,
+                 length_beams[0] / 2. + target_extension,
+                 dist_mpmt_to_beam_centre,
+                 -dist_mpmt_to_beam_centre,
+                 -length_beams[0] / 2. - target_extension,
+                 -length_beams[1] / 2. - target_extension,
+                 -length_beams[2] / 2. - target_extension,
+                 -length_beams[2] / 2. - target_extension,
+                 -length_beams[1] / 2. - target_extension,
+                 -length_beams[0] / 2. - target_extension,
+                 -dist_mpmt_to_beam_centre]
+
+    for i_target in range(16):
+        loc = [target_xs[i_target], target_ys[i_target], target_z]
+
+        bottom_targets.append({'name': str(i_target), 'kind': 'T',
+                               'loc': loc,
+                               'loc_sig': [1.0, 1.0, 1.0],
+                               'rot_axes': 'Z',
+                               'rot_angles': 0.,
+                               'rot_angles_sig': 0.})
+
+    targets_design['bottom'] = bottom_targets
 
     # Top super module:
     ###################
@@ -149,9 +209,9 @@ class SM(Device):
         rot_phi = Rotation.from_euler('Z', phi_angle)
         rot_loc = rot_phi.apply(loc)
         # rotations of the normal defined by 2 extrinsic rotations
-        rot_angles = [phi_angle + np.pi/2., 0., -np.pi/2. - camera_angle]
+        rot_angles = [phi_angle + np.pi / 2., 0., -np.pi / 2. - camera_angle]
 
-        top_cameras.append({'name': str(i_cam+4), 'kind': 'C',
+        top_cameras.append({'name': str(i_cam + 4), 'kind': 'C',
                             'loc': rot_loc,
                             'loc_sig': [1.0, 1.0, 1.0],
                             'rot_axes': 'ZYX',
@@ -159,6 +219,26 @@ class SM(Device):
                             'rot_angles_sig': [rot_angle_sig] * 3})
 
     cameras_design['top'] = top_cameras
+
+    top_targets = []
+    # located at a point extending from the support beams of bottom super module
+    # they are not to be used to define the coordinate system of the super module
+    # instead, they serve as references for determining the placement of the super module after full assembly
+    z_inner_top = -10.  # mm of the inner top surface of the support beams (different from bottom)
+
+    target_z = z_inner_top - height_inner_beam / 2.
+
+    for i_target in range(16):
+        loc = [target_xs[i_target], target_ys[i_target], target_z]
+
+        top_targets.append({'name': str(i_target), 'kind': 'T',
+                            'loc': loc,
+                            'loc_sig': [1.0, 1.0, 1.0],
+                            'rot_axes': 'Z',
+                            'rot_angles': 0.,
+                            'rot_angles_sig': 0.})
+
+    targets_design['top'] = top_targets
 
     # Barrel super module:
     ####################
@@ -207,6 +287,11 @@ class SM(Device):
         if self.cameras_design.get(kind, None) is not None:
             self.cameras = self.place_devices(CAMERA, self.cameras_design, kind)
 
+        # create and place the set of targets
+        self.targets = None
+        if self.targets_design.get(kind, None) is not None:
+            self.targets = self.place_devices(TARGET, self.targets_design, kind)
+
     def get_mpmts(self, mpmt_list):
         # recursive discovery of mpmts in super modules
         if self.mpmts is None:
@@ -223,3 +308,12 @@ class SM(Device):
         else:
             if self.cameras is not None:
                 camera_list.extend(self.cameras)
+
+    def get_targets(self, target_list):
+        # recursive discovery of targets in super modules
+        if self.sms is not None:
+            for sm in self.sms:
+                sm.get_targets(target_list)
+        else:
+            if self.targets is not None:
+                target_list.extend(self.targets)

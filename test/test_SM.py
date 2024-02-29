@@ -104,3 +104,20 @@ def test_get_bottom():
         directions_z.append(p['direction_z'])
 
     assert my_bottom is not None
+
+def test_get_top():
+    my_top = SM('top', kind='top')
+    target_list = []
+    my_top.get_targets(target_list)
+
+    locations = []
+    directions_x = []
+    directions_z = []
+
+    for target in my_top.targets:
+        p = target.get_placement('design', my_top)
+        locations.append(p['location'])
+        directions_x.append(p['direction_x'])
+        directions_z.append(p['direction_z'])
+
+    assert my_bottom is not None
