@@ -22,6 +22,8 @@ class WCD(Device):
 
     # class properties:
     light_velocity = 2.99792E2  # speed of light in vacuum (mm/ns)
+    mpmt_delay_reference = 0 # reference MPMT to which all other MPMTs are compared to define time delay offsets
+    delay_reference = 0.  # time delay assigned to reference MPMT (ns)
 
     prop_mean = {}  # dictionary of mean properties of different kinds of WCDs
     prop_scale = {}  # scale of variations of properties used to create objects
@@ -63,7 +65,7 @@ class WCD(Device):
             sign_x = 2 * i - 1
             x_mpmt = sign_x * 4000.
             z_mpmt = (2 * j - 1) * 1000.
-            def_mpmts.append({'kind': 'M1',
+            def_mpmts.append({'kind': 'MI',
                               'loc': [x_mpmt, 0., z_mpmt],
                               'loc_sig': [1.0, 1.0, 1.0],
                               'rot_axes': 'XYZ',
