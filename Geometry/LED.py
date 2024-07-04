@@ -59,7 +59,7 @@ class LED(Device):
     design_scale['LD'] = ld_design_scale
     design_var['LD'] = ld_design_var
 
-    # Collimated LED:
+    # Collimated LEDs:
     lc_design_mean = def_design_mean.copy()
     lc_design_mean['cone_angle'] = 0.1745  # 10 degrees
     lc_design_mean['intensity'] = 1.E7  # 0.01 billion photons per ns per volt
@@ -70,6 +70,18 @@ class LED(Device):
     design_mean['LC'] = lc_design_mean
     design_scale['LC'] = lc_design_scale
     design_var['LC'] = lc_design_var
+
+    lc15_design_mean = lc_design_mean.copy()
+    lc15_design_mean['cone_angle'] = 0.2618  # 15 degrees
+    design_mean['LC15'] = lc15_design_mean
+    design_scale['LC15'] = lc_design_scale
+    design_var['LC15'] = lc_design_var
+
+    lc30_design_mean = lc_design_mean.copy()
+    lc30_design_mean['cone_angle'] = 0.5236  # 30 degrees
+    design_mean['LC30'] = lc30_design_mean
+    design_scale['LC30'] = lc_design_scale
+    design_var['LC30'] = lc_design_var
 
     def __init__(self, name, container=None, kind='LD', place_design={}, place_true={}):
         super().__init__(LED, name, container, kind, place_design, place_true)
