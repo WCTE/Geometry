@@ -15,7 +15,7 @@ import numpy as np
 from Geometry.Device import Device
 from Geometry.MPMT import MPMT
 from Geometry.SM import SM
-
+from Geometry.LED import LED
 
 class WCD(Device):
     """A water cherenkov detector"""
@@ -212,3 +212,6 @@ class WCD(Device):
             # give each camera a unique name
             for i, camera in enumerate(self.cameras):
                 camera.name = str(i)
+        # calibration sources:
+        if kind in self.calibs_design:
+            self.calibs = self.place_devices(LED, self.calibs_design, kind)

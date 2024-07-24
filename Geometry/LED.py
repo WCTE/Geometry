@@ -16,7 +16,7 @@ class LED(Device):
 
     design_desc = {'cone_angle': 'radian cone angle',
                    'cone_ring_width': 'if zero, then full cone, otherwise specifies ring width (radians)',
-                   'intensity': '0.1 billion photons per ns per volt',
+                   'intensity': 'billion photons per ns per volt',
                    'intensity_rel_sig': 'relative standard deviation',
                    'delay': 'ns delay for leading edge',
                    'delay_jitter': 'ns jitter',

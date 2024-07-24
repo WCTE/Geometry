@@ -208,6 +208,63 @@ class MPMT(Device):
                               'rot_angles': rot_angles,
                               'rot_angles_sig': [0.01, 0.01]})
 
+    # A FD-MPMT (included in the WCTE bottom endcap)
+    fd_pmts = []
+    # dome pattern of PMTs:
+    fd_dz_by_row = [0., -20.8, -75.543]  # mm wrt PMT 0
+    fd_transverse_radius_by_row = [0., 109.487, 199.909]
+
+    # baseplate top surface definition
+    fd_dz_to_pmt0 = 224.678  # mm from top surface to PMT0
+    fd_baseplate_radius = 590.00/2. # mm
+    fd_base_xy_points = []
+    for i in range(40):
+        theta = 2. * np.pi * i / 40
+        x = fd_baseplate_radius * np.cos(theta)
+        y = fd_baseplate_radius * np.sin(theta)
+        fd_base_xy_points.append([x, y, 0.])
+
+    # feedthrough hole definitions (to show orientation clearly)
+    fd_ft1_xy = [201.886, 35.598]  # mm centre of feedthrough hole
+    fd_ft2_xy = [201.886, -35.598]  # mm centre of feedthrough hole
+    fd_ft_diameter = 44.  # mm as seen from outside
+    fd_feedthough1_xy_points = []
+    fd_feedthough2_xy_points = []
+    nft = 20
+    for i in range(nft):
+        theta = 2. * np.pi * i / nft
+        x = fd_ft1_xy[0] + fd_ft_diameter / 2. * np.cos(theta)
+        y = fd_ft1_xy[1] + fd_ft_diameter / 2. * np.sin(theta)
+        fd_feedthough1_xy_points.append([x, y, 0.])
+        x = fd_ft2_xy[0] + fd_ft_diameter / 2. * np.cos(theta)
+        y = fd_ft2_xy[1] + fd_ft_diameter / 2. * np.sin(theta)
+        fd_feedthough2_xy_points.append([x, y, 0.])
+
+    for i_row, number in enumerate(number_by_row):
+        if i_row == 0:
+            fd_pmts.append({'name': str(len(fd_pmts)), 'kind': 'P3',
+                              'loc': [0., 0., fd_dz_to_pmt0],
+                              'loc_sig': [1.0, 1.0, 1.0],
+                              'rot_axes': 'xz',
+                              'rot_angles': [0., 0.],
+                              'rot_angles_sig': [0.01, 0.01]})
+        else:
+            for i_pmt in range(number):
+                # start with a PMT located on the mpmt y axis
+                loc = [0., fd_transverse_radius_by_row[i_row], fd_dz_by_row[i_row] + fd_dz_to_pmt0]
+                # now rotate it around the mpmt z axis
+                phi_angle = 2. * np.pi * i_pmt / number
+                rot_phi = Rotation.from_euler('Z', phi_angle)
+                rot_loc = rot_phi.apply(loc)
+                # rotations of the normal defined by 2 extrinsic rotations
+                rot_angles = [angle_by_row[i_row], phi_angle]
+                fd_pmts.append({'name': str(len(fd_pmts)), 'kind': 'P3',
+                                  'loc': rot_loc,
+                                  'loc_sig': [1.0, 1.0, 1.0],
+                                  'rot_axes': 'xz',
+                                  'rot_angles': rot_angles,
+                                  'rot_angles_sig': [0.01, 0.01]})
+
     # Standard dome MPMTs:
     md_design_mean = def_design_mean.copy()
     md_design_mean['adc_cf'] = 2.2  # 2.2 ADC channels per mV
@@ -230,18 +287,35 @@ class MPMT(Device):
     pmts_design['MI'] = dome_pmts
     leds_design['MI'] = dome_leds
 
+    # Far detector dome MPMTs:
+    design_mean['FD'] = md_design_mean
+    design_scale['FD'] = md_design_scale
+    design_var['FD'] = md_design_var
+
+    pmts_design['FD'] = fd_pmts
+    leds_design['FD'] = []
+
     def get_xy_points(self, place_info, feature='base', device_for_coordinate_system=None):
         """Return set of points that shows features on x-y plane (z=0)
         To show feedthrough, set feature='feedthrough'
         To show survey CN hole, set feature='survey_cN' where N is 1, 2, 3, or 4
         """
 
-        xy_points = self.base_xy_points
+        if self.kind != 'FD':
+            xy_points = self.base_xy_points
+        else:
+            xy_points = self.fd_base_xy_points
         if feature == 'feedthrough':
             xy_points = self.feedthough_xy_points
         elif feature.startswith('survey_c'):
             n = int(feature[8])
             xy_points = self.survey_holes_xy_points[n - 1]
+        elif feature.startswith('fd_feedthrough'):
+            n =int(feature[14])
+            if n == 1:
+                xy_points = self.fd_feedthough1_xy_points
+            elif n == 2:
+                xy_points = self.fd_feedthough2_xy_points
 
         return self.get_transformed_points(xy_points, place_info, device_for_coordinate_system)
 

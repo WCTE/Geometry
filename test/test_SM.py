@@ -105,6 +105,8 @@ def test_get_bottom():
 
     assert my_bottom is not None
 
+test_get_bottom()
+
 def test_get_top():
     my_top = SM('top', kind='top')
     target_list = []
