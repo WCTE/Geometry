@@ -25,9 +25,9 @@ class WCD(Device):
     mpmt_delay_reference = 0 # reference MPMT to which all other MPMTs are compared to define time delay offsets
     delay_reference = 0.  # time delay assigned to reference MPMT (ns)
 
-    prop_mean = {}  # dictionary of mean properties of different kinds of WCDs
-    prop_scale = {}  # scale of variations of properties used to create objects
-    prop_var = {}  # distribution of variations
+    design_mean = {}  # dictionary of mean properties of different kinds of WCDs
+    design_scale = {}  # scale of variations of properties used to create objects
+    design_var = {}  # distribution of variations
 
     # A dictionary of mpmt kinds and placements in the WCD:
     mpmts_design = {}
@@ -37,17 +37,17 @@ class WCD(Device):
 
     # default properties of WCDs
     # all properties are defined by primitives, so shallow dictionary copy works
-    # if new properties are needed, be sure to add to def_prop_mean
-    # and def_prop_scale
-    def_prop_mean = {'clock_offset': 0.,  # ns offset to reference clock
+    # if new properties are needed, be sure to add to def_design_mean
+    # and def_design_scale
+    def_design_mean = {'clock_offset': 0.,  # ns offset to reference clock
                      'refraction_index': 1.4,
                      'absorption_length': 80.E3  # 80 m
                      }
-    def_prop_scale = {'clock_offset': 0.,
+    def_design_scale = {'clock_offset': 0.,
                       'refraction_index': 0.,
                       'absorption_length': 1.E3
                       }
-    def_prop_var = {}
+    def_design_var = {}
 
     def_calibs = []
     # one calibration beacon located somewhere
@@ -100,39 +100,39 @@ class WCD(Device):
                        'rot_angles_sig': [0.01, 0.01, 0.01]})
 
     # Standard WCD:
-    w1_prop_mean = def_prop_mean.copy()
-    w1_prop_scale = def_prop_scale.copy()
-    w1_prop_var = def_prop_var.copy()
+    w1_design_mean = def_design_mean.copy()
+    w1_design_scale = def_design_scale.copy()
+    w1_design_var = def_design_var.copy()
 
-    prop_mean['W1'] = w1_prop_mean
-    prop_scale['W1'] = w1_prop_scale
-    prop_var['W1'] = w1_prop_var
+    design_mean['W1'] = w1_design_mean
+    design_scale['W1'] = w1_design_scale
+    design_var['W1'] = w1_design_var
 
     mpmts_design['W1'] = def_mpmts
     calibs_design['W1'] = def_calibs
 
     # 6 mPMT Standard WCD:
-    w3_prop_mean = def_prop_mean.copy()
-    w3_prop_scale = def_prop_scale.copy()
-    w3_prop_var = def_prop_var.copy()
+    w3_design_mean = def_design_mean.copy()
+    w3_design_scale = def_design_scale.copy()
+    w3_design_var = def_design_var.copy()
 
-    prop_mean['W3'] = w3_prop_mean
-    prop_scale['W3'] = w3_prop_scale
-    prop_var['W3'] = w3_prop_var
+    design_mean['W3'] = w3_design_mean
+    design_scale['W3'] = w3_design_scale
+    design_var['W3'] = w3_design_var
 
     mpmts_design['W3'] = def3_mpmts
     calibs_design['W3'] = def_calibs
 
     # Standard WCD in air:
-    w2_prop_mean = def_prop_mean.copy()
-    w2_prop_mean['refraction_index'] = 1.0
-    w2_prop_mean['absorption_length'] = 80.E6
-    w2_prop_scale = def_prop_scale.copy()
-    w2_prop_var = def_prop_var.copy()
+    w2_design_mean = def_design_mean.copy()
+    w2_design_mean['refraction_index'] = 1.0
+    w2_design_mean['absorption_length'] = 80.E6
+    w2_design_scale = def_design_scale.copy()
+    w2_design_var = def_design_var.copy()
 
-    prop_mean['W2'] = w2_prop_mean
-    prop_scale['W2'] = w2_prop_scale
-    prop_var['W2'] = w2_prop_var
+    design_mean['W2'] = w2_design_mean
+    design_scale['W2'] = w2_design_scale
+    design_var['W2'] = w2_design_var
 
     mpmts_design['W2'] = def_mpmts
     calibs_design['W2'] = def_calibs
@@ -143,13 +143,13 @@ class WCD(Device):
     # WCTE
     ######
 
-    wcte_prop_mean = def_prop_mean.copy()
-    wcte_prop_scale = def_prop_scale.copy()
-    wcte_prop_var = def_prop_var.copy()
+    wcte_design_mean = def_design_mean.copy()
+    wcte_design_scale = def_design_scale.copy()
+    wcte_design_var = def_design_var.copy()
 
-    prop_mean['WCTE'] = wcte_prop_mean
-    prop_scale['WCTE'] = wcte_prop_scale
-    prop_var['WCTE'] = wcte_prop_var
+    design_mean['WCTE'] = wcte_design_mean
+    design_scale['WCTE'] = wcte_design_scale
+    design_var['WCTE'] = wcte_design_var
 
     # The WCTE has 4 rows of barrel mPMTs, with the beam window on the second row from bottom
     # Use the centre of the beam window as the height, y = 0

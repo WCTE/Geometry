@@ -31,3 +31,5 @@ def test_wcd_json_load():
     p = info['mpmts']['43']['leds']['3']['placement']
 
     assert info is not None
+
+test_get_wcd()
