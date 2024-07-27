@@ -51,8 +51,8 @@ class WCD(Device):
 
     def_calibs = []
     # one calibration beacon located somewhere
-    def_calibs.append({'kind': 'L1',
-                       'loc': [1000., 1500., 2000., ],
+    def_calibs.append({'kind': 'LD',
+                       'loc': [100., 200., 300., ],
                        'loc_sig': [0.0, 0.0, 0.0],
                        'rot_axes': 'XZ',
                        'rot_angles': [0., 0.],
