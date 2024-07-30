@@ -1,5 +1,5 @@
 # Geometry
-This is a python library for specifying locations and orientations of devices that make up water Cherenkov
+This is a python package for specifying locations and orientations of devices that make up water Cherenkov
 detectors (WCDs) based on multi-PMT modules (mPMTs). Devices, derived from the Device class, can contain other devices
 which are placed according to the coordinate system of its container. For example PMT placements are specified in
 the coordinate system of the mPMT they are contained in, and mPMT placements are specified in the coordinate system
@@ -10,6 +10,7 @@ The table below shows the active elements, which are classes that inherit from t
 
 | Class | Device                                | Kinds currently implemented                               |
 |:------|:--------------------------------------|:----------------------------------------------------------|
+| HALL  | Hall                                  | none - used to define coordinate system of hall or survey |
 | WCD   | Water Cherenkov Detector              | WCTE: full detector                                       |
 | SM    | Super Module (several mPMTs combined) | SSM: simple super module as basis of mPMT test setup      |
 |       |                                       | bottom, top, barrel : super modules that make up the WCTE |
@@ -17,6 +18,7 @@ The table below shows the active elements, which are classes that inherit from t
 | PMT   | Photomultiplier Tube                  | P3: normal 3 inch PMT                                     |
 | LED   | Light Emitting Diode                  | LD: diffuse, LC: collimated                               |
 | CAMERA | Camera                               | C: camera for WCTE                                        |
+|TARGET | Target                                | T: target for WCTE                                        |
 
 To allow extended functionality beyond geometry, the `Device` class also includes properties.
 Class dictionaries of dictionaries store design properties of different kinds of devices, first indexed by the 
@@ -54,7 +56,7 @@ It is possible to change the true properties of a device after it has been insta
     
     >>> PMT.design_mean['P3']['delay'] = 100. # changing the design properties of a device kind after one has already been instantiated as test_pmt (not recommended)
     >>> PMT.design_scale['P3']['delay'] = 10.
-    >>> test_pmt2 = PMT('test_pmt2') # instantiating a new 'P3' PMT will use the new design properties
+    >>> test_pmt2 = PMT('test_pmt2', kind='P3') # instantiating a new 'P3' PMT will use the new design properties
     >>> print(test_pmt2.get_properties('design')['delay'], test_pmt2.get_properties('true')['delay'])
     100.0 95.13212911052935
     >>> print('test_pmt:', test_pmt.get_properties('design')['delay'], test_pmt.get_properties('true')['delay']) # design value for P3 type PMTs has changed after test_pmt was instantiated
@@ -110,7 +112,7 @@ reference instances of a device in simulation studies. The file format is a pick
 
 Alternatively, property and placement information for a device (and the devices it contains) can be saved in a json
 formatted file using the `save_json` method with the desired filename as an argument. This would be convenient for 
-accessing geometry information in other languages.
+accessing geometry information in other programming languages.
 
 ```python
     >>> wcte.save_json('wcte_v11.json', prop_info='design', place_info='design', devices='mpmts'))
@@ -133,7 +135,6 @@ survey data to determine the as-built placements of all MPMTs in the WCTE coordi
 Other WCD or Supermodule designs can be defined by extending the WCD or SM classes and adding to the 
 design dictionaries.
 
-Additional functionality for the devices can be incorporated by extending the device classes. The TimingCalib package
-is an example of this. (TODO: revise TimingCalib package to use this package - currently it has its own geometry package).
-
-
+Additional functionality for the devices can be incorporated by extending the device classes. The TimeCal package uses
+the Geometry package to define the geometry of the system being calibrated. For convenience, the device property
+estimate dictionaries (for mPMTs, PMTs, and LEDs) in this package are used to store the time delay constants.

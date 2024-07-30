@@ -132,40 +132,40 @@ class SM(Device):
     dist_mpmt_to_beam_centre = 267.5 + 45. / 2.  # mm distance from an mPMT to the centre of the support beam
     width_outer_beam = 45.  # mm width of the outer surface of the support beams
     length_beams = [1920., 3030., 3570.]  # lengths of the small, medium, and long beams
-    target_extension = 20.  # mm extension of the target from the end of the support beams
+    target_extension = 48  # mm extension of the target from the end of the support beams (est by minimizing rms)
 
     target_z = z_inner_top - height_inner_beam / 2.
     target_xs = [length_beams[2] / 2. + target_extension,
-                 2. * tb_pitch + dist_mpmt_to_beam_centre,
-                 1. * tb_pitch + dist_mpmt_to_beam_centre,
+                 length_beams[1] / 2. + target_extension,
+                 length_beams[0] / 2. + target_extension,
                  dist_mpmt_to_beam_centre,
                  -dist_mpmt_to_beam_centre,
-                 -1. * tb_pitch - dist_mpmt_to_beam_centre,
-                 -2. * tb_pitch - dist_mpmt_to_beam_centre,
+                 -length_beams[0] / 2. - target_extension,
+                 -length_beams[1] / 2. - target_extension,
                  -length_beams[2] / 2. - target_extension,
                  -length_beams[2] / 2. - target_extension,
-                 -2. * tb_pitch - dist_mpmt_to_beam_centre,
-                 -1. * tb_pitch - dist_mpmt_to_beam_centre,
+                 -length_beams[1] / 2. - target_extension,
+                 -length_beams[0] / 2. - target_extension,
                  -dist_mpmt_to_beam_centre,
                  dist_mpmt_to_beam_centre,
-                 1. * tb_pitch + dist_mpmt_to_beam_centre,
-                 2. * tb_pitch + dist_mpmt_to_beam_centre,
+                 length_beams[0] / 2. + target_extension,
+                 length_beams[1] / 2. + target_extension,
                  length_beams[2] / 2. + target_extension]
     target_ys = [dist_mpmt_to_beam_centre,
-                 length_beams[0] / 2. + target_extension,
-                 length_beams[1] / 2. + target_extension,
+                 1. * tb_pitch + dist_mpmt_to_beam_centre,
+                 2. * tb_pitch + dist_mpmt_to_beam_centre,
                  length_beams[2] / 2. + target_extension,
                  length_beams[2] / 2. + target_extension,
-                 length_beams[1] / 2. + target_extension,
-                 length_beams[0] / 2. + target_extension,
+                 2. * tb_pitch + dist_mpmt_to_beam_centre,
+                 1. * tb_pitch + dist_mpmt_to_beam_centre,
                  dist_mpmt_to_beam_centre,
                  -dist_mpmt_to_beam_centre,
-                 -length_beams[0] / 2. - target_extension,
-                 -length_beams[1] / 2. - target_extension,
+                 -1. * tb_pitch - dist_mpmt_to_beam_centre,
+                 -2. * tb_pitch - dist_mpmt_to_beam_centre,
                  -length_beams[2] / 2. - target_extension,
                  -length_beams[2] / 2. - target_extension,
-                 -length_beams[1] / 2. - target_extension,
-                 -length_beams[0] / 2. - target_extension,
+                 -2. * tb_pitch - dist_mpmt_to_beam_centre,
+                 -1. * tb_pitch - dist_mpmt_to_beam_centre,
                  -dist_mpmt_to_beam_centre]
 
     for i_target in range(16):
