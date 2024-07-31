@@ -188,6 +188,9 @@ class WCD(Device):
 
     sms_design['WCTE'] = wcte_sms
 
+    # Add a beacon (laser ball for example)
+    calibs_design['WCTE'] = def_calibs
+
     def __init__(self, name, container=None, kind='WCTE', place_design={}, place_true={}, device_type=SM):
         super().__init__(WCD, name, container, kind, place_design, place_true)
 
