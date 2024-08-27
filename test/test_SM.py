@@ -105,7 +105,7 @@ def test_get_bottom():
 
     assert my_bottom is not None
 
-test_get_bottom()
+#test_get_bottom()
 
 def test_get_top():
     my_top = SM('top', kind='top')
@@ -122,4 +122,6 @@ def test_get_top():
         directions_x.append(p['direction_x'])
         directions_z.append(p['direction_z'])
 
-    assert my_bottom is not None
+    assert my_top is not None
+
+test_get_top()
