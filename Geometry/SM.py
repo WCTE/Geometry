@@ -81,11 +81,11 @@ class SM(Device):
     y_rots = [0.5, 0.5, 0.5, 1.5, 1.5, 1.5, 1.5, 1.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 0.5, 0.5]
 
     mpmt_kinds = ['ME']*12 + ['FD','ME','FD','ME','FD','ME','FD','ME','ME']
-    for i in [12, 14, 16, 18]:
-        offsets[i][2] = 7.775  # mm offset for FD mPMTs
 
-    for offset, y_rot, mpmt_kind in zip(offsets, y_rots, mpmt_kinds):
-        location = offset
+    for i, (offset, y_rot, mpmt_kind) in enumerate(zip(offsets, y_rots, mpmt_kinds)):
+        location = offset.copy()
+        if i in [12, 14, 16, 18]:
+            location[2] = 7.775  # mm offset for FD mPMTs
         bottom_mpmts.append({
             'kind': mpmt_kind,
             'loc': location,
