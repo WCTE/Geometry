@@ -115,12 +115,11 @@ class MPMT(Device):
         feedthough_xy_points.append([x, y, 0.])
     # Survey holes definition (to show orientation clearly) - these are labelled by C1, C2, C3, C4
     survey_c = 196.58  # mm xm or ym coordinates are +/- this value
-    # Fiducial points (centres of corner cube reflectors) are offset in zm by about 30 mm (TBD)
-    fiducial_zm_offset = -30.  # mm
-    fiducials = [[-survey_c, -survey_c, fiducial_zm_offset],
-                 [-survey_c, survey_c, fiducial_zm_offset],
-                 [survey_c, -survey_c, fiducial_zm_offset],
-                 [survey_c, survey_c, fiducial_zm_offset]]
+    # Note: Fiducial points (centres of corner cube reflectors) are offset in zm: that is specified in get_fiducials
+    fiducials = [[-survey_c, -survey_c, 0.],
+                 [-survey_c, survey_c, 0.],
+                 [survey_c, -survey_c, 0.],
+                 [survey_c, survey_c, 0.]]
     # Survey holes are 8 mm diameter
     survey_holes_diameter = 8  # mm
     survey_holes_xy_points = []
@@ -319,9 +318,13 @@ class MPMT(Device):
 
         return self.get_transformed_points(xy_points, place_info, device_for_coordinate_system)
 
-    def get_fiducials(self, place_info, device_for_coordinate_system=None):
-        """Return the set of fiducial points for surveying (locations of the corner cube reflectors)"""
-        return self.get_transformed_points(self.fiducials, place_info, device_for_coordinate_system)
+    def get_fiducials(self, place_info, device_for_coordinate_system=None, z_offset = 0.):
+        """Return the set of fiducial points for surveying (locations of the corner cube reflectors)
+           * z_offset specifies the total offset due to target holders and plate thickness etc"""
+        fiducials = self.fiducials.copy()
+        for fiducial in fiducials:
+            fiducial[2] += z_offset
+        return self.get_transformed_points(fiducials, place_info, device_for_coordinate_system)
 
     def __init__(self, name, container=None, kind='ME', place_design={}, place_true={}):
         super().__init__(MPMT, name, container, kind, place_design, place_true)
