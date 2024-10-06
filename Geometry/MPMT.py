@@ -2,6 +2,7 @@ from Geometry.Device import Device
 from Geometry.PMT import PMT
 from Geometry.LED import LED
 import numpy as np
+import copy
 from scipy.spatial.transform import Rotation
 
 
@@ -321,7 +322,7 @@ class MPMT(Device):
     def get_fiducials(self, place_info, device_for_coordinate_system=None, z_offset = 0.):
         """Return the set of fiducial points for surveying (locations of the corner cube reflectors)
            * z_offset specifies the total offset due to target holders and plate thickness etc"""
-        fiducials = self.fiducials.copy()
+        fiducials = copy.deepcopy(self.fiducials)
         for fiducial in fiducials:
             fiducial[2] += z_offset
         return self.get_transformed_points(fiducials, place_info, device_for_coordinate_system)
