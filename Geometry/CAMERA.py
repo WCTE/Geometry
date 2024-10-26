@@ -53,7 +53,7 @@ class CAMERA(Device):
         survey_holes_xy_points.append([survey_radius * np.cos(angle), survey_radius * np.sin(angle)])
 
     # Fiducial points (centres of corner cube reflectors) are offset in zm by some distance: set at 0 mm to show holes
-    fiducial_z_offset = 0.  # mm
+    fiducial_z_offset = 60.  # mm
     fiducials = []
     for i in range(n_holes):
         fiducials.append([survey_holes_xy_points[i][0], survey_holes_xy_points[i][1], fiducial_z_offset])
