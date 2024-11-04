@@ -22,7 +22,8 @@ class LED(Device):
                    'delay_jitter': 'ns jitter',
                    'rise_time': 'ns rise time',
                    'pulse_width': 'ns mean pulse width (flat top)',
-                   'pulse_width_jitter': 'standard deviation of above'
+                   'pulse_width_jitter': 'standard deviation of above',
+                   'wavelength': 'nm peak wavelength'
                    }
 
     def_design_mean = {'cone_angle': 1.0,  # radian cone angle
@@ -31,9 +32,10 @@ class LED(Device):
                        'intensity_rel_sig': 0.01,  # relative standard deviation
                        'delay': 4.,  # ns delay for leading edge
                        'delay_jitter': 0.05,  # ns jitter
-                       'rise_time': 1.0,  # ns rise time
-                       'pulse_width': 2.0,  # ns mean pulse width (flat top)
-                       'pulse_width_jitter': 0.05  # standard deviation of above
+                       'rise_time': 0.5,  # ns rise time
+                       'pulse_width': 1.0,  # ns mean pulse width (flat top)
+                       'pulse_width_jitter': 0.05,  # standard deviation of above
+                       'wavelength': 470.  # nm peak wavelength
                        }
     def_design_scale = {'cone_angle': 0.01,
                         'cone_ring_width': 0.0,
@@ -43,7 +45,8 @@ class LED(Device):
                         'delay_jitter': 0.01,
                         'rise_time': 0.1,
                         'pulse_width': 0.1,
-                        'pulse_width_jitter': 0.01
+                        'pulse_width_jitter': 0.01,
+                        'wavelength': 2.
                         }
     def_design_var = {'intensity': 'gamma',
                       'delay': 'gamma',
