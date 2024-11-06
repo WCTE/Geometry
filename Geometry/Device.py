@@ -189,7 +189,7 @@ class Device:
             device_place = getattr(self, 'place_' + place_info, None)
             if device_place is None:
                 raise ValueError('Device: ' + self.__class__.__name__ + ' ' + self.name +
-                                 ' has no ' + place_info + 'placement information.')
+                                 ' has no ' + place_info + ' placement information.')
             head = device_place['loc']
             dist_head = 100.
 
