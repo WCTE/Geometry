@@ -122,6 +122,22 @@ accessing geometry information in other programming languages.
     >>> placement = info['mpmts']['43']['leds']['3']['placement']
 ```
 
+Surveys were done during the assembly of the WCTE to determine the placements of the mPMTs. The survey data is used to
+define the as-built placements of the mPMTs in the WCTE coordinate system, which is available in the geometry file,
+`wcte_bldg157.geo` located in the examples folder.
+
+```python
+    >>> from Geometry.Device import Device
+    >>> wcte_bldg157 = Device.open_file('wcte_bldg157.geo')
+```
+
+To access the as-built placements of the mPMTs for other programming languages, save the geometry information in a json
+file:
+    
+```python
+    >>> wcte_bldg157.save_json('wcte_bldg157.json', prop_info='est', place_info='est', devices='mpmts'))
+```
+
 Images of the devices can be rendered in 3D. Example jupyter notebooks, using the k3d package, in the
 examples folder show
  * an MPMT with all its PMTs and LEDs, and baseplate (at z=0) showing the large feedthrough hole
