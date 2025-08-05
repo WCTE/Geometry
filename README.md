@@ -124,11 +124,14 @@ accessing geometry information in other programming languages.
 
 Surveys were done during the assembly of the WCTE to determine the placements of the mPMTs. The survey data is used to
 define the as-built placements of the mPMTs in the WCTE coordinate system, which is available in the geometry file,
-`wcte_bldg157.geo` located in the examples folder.
+`wcte_bldg157.geo` located in the examples folder. This will produce a HALL object that contains the WCTE detector
+as the first (and only) WCD object.
 
 ```python
     >>> from Geometry.Device import Device
     >>> wcte_bldg157 = Device.open_file('wcte_bldg157.geo')
+    >>> wcte = wcte_bldg157.wcds[0]
+    >>> pmt_43_1 = wcte.mpmts[43].pmts[1]
 ```
 
 To access the as-built placements of the mPMTs for other programming languages, save the geometry information in a json
