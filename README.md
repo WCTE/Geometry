@@ -8,17 +8,17 @@ be used to define the global coordinate system.
 
 The table below shows the active elements, which are classes that inherit from the `Device` class:
 
-| Class | Device                                | Kinds currently implemented                               |
-|:------|:--------------------------------------|:----------------------------------------------------------|
-| HALL  | Hall                                  | none - used to define coordinate system of hall or survey |
-| WCD   | Water Cherenkov Detector              | WCTE: full detector                                       |
-| SM    | Super Module (several mPMTs combined) | SSM: simple super module as basis of mPMT test setup      |
-|       |                                       | bottom, top, barrel : super modules that make up the WCTE |
-| MPMT  | Multi-PMT module                      | ME: ex-situ, MI: in-situ, MR: rectangular (for testing)   |
-| PMT   | Photomultiplier Tube                  | P3: normal 3 inch PMT                                     |
-| LED   | Light Emitting Diode                  | LD: diffuse, LC: collimated                               |
-| CAMERA | Camera                               | C: camera for WCTE                                        |
-|TARGET | Target                                | T: target for WCTE                                        |
+| Class | Device                                | Kinds currently implemented                                                 |
+|:------|:--------------------------------------|:----------------------------------------------------------------------------|
+| HALL  | Hall                                  | wcte_bldg157 - defines coordinate system of hall or survey containing a WCD |
+| WCD   | Water Cherenkov Detector              | WCTE: full detector                                                         |
+| SM    | Super Module (several mPMTs combined) | SSM: simple super module as basis of mPMT test setup                        |
+|       |                                       | bottom, top, barrel : super modules that make up the WCTE                   |
+| MPMT  | Multi-PMT module                      | ME: ex-situ, MI: in-situ, MR: rectangular (for testing)                     |
+| PMT   | Photomultiplier Tube                  | P3: normal 3 inch PMT                                                       |
+| LED   | Light Emitting Diode                  | LD: diffuse, LC: collimated                                                 |
+| CAMERA | Camera                               | C: camera for WCTE                                                          |
+|TARGET | Target                                | T: target for WCTE                                                          |
 
 To allow extended functionality beyond geometry, the `Device` class also includes properties.
 Class dictionaries of dictionaries store design properties of different kinds of devices, first indexed by the 
