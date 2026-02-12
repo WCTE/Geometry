@@ -125,3 +125,21 @@ def test_get_top():
     assert my_top is not None
 
 test_get_top()
+
+def test_get_iwcd_bottom():
+    my_bottom = SM('iwcd_bottom', kind='iwcd_bottom')
+
+    mpmt_list = []
+    my_bottom.get_mpmts(mpmt_list)
+
+    locations = []
+    directions_x = []
+    directions_z = []
+
+    for mpmt in my_bottom.mpmts:
+        p = mpmt.get_placement('design', my_bottom)
+        locations.append(p['location'])
+        directions_x.append(p['direction_x'])
+        directions_z.append(p['direction_z'])
+
+    assert my_bottom is not None

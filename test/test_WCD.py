@@ -1,4 +1,5 @@
 from Geometry.WCD import WCD
+from Geometry.MPMT import MPMT
 import json
 
 
@@ -17,6 +18,11 @@ def test_get_wcd():
 
     assert wcte is not None
 
+def test_get_w3():
+    w3 = WCD('w3', kind='W3', device_type=MPMT)
+
+    n_mpmt = len(w3.mpmts)
+    assert n_mpmt == 8
 
 def test_wcd_json():
     wcte = WCD('wcte', kind='WCTE')

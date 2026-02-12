@@ -271,6 +271,145 @@ class SM(Device):
 
     devices_design['barrel'] = barrel_mpmts
 
+    # Super modules that make up the IWCD WCD:
+    # The z-axis for each super module is pointing upwards.
+    # Once assembled, the IWCD z-axis is in horizontal, closely aligned with the beam direction
+
+    iwcd_tb_pitch = 830.  # mm separation of mPMT centres on top and bottom (x and y the same)
+    iwcd_bot_centre_extra_x = 15 # mm extra x offset of nearest to centre mPMTs relative to centre in x
+    iwcd_bot_centre_extra_y = 15 # mm extra y offset of nearest to centre mPMTs relative to centre in y
+    iwcd_diameter = 3661.87*2  # mm separation of mPMT baseplates on opposite barrel locations
+    iwcd_barrel_vertical_pitch_11 = 720.  # mm separation of mPMT centres for rows within a supermodule (11 row version)
+    iwcd_barrel_vertical_pitch_10 = 800.  # mm separation of mPMT centres for rows within a supermodule (11 row version)
+    iwcd_barrel_vertical_pitch_extra = 10.  # mm separation between supermodules
+    iwcd_barrel_z0 = -7230/2. # mm z coordinate of the mPMTs in the lowest row of the barrel supermodule
+
+    loc_sig = [5.0, 5.0, 5.0]  # mm positioning accuracy
+    rot_angle_sig = 0.05  # radians
+
+    # Bottom super module:
+    ######################
+    # Origin is the centre of the set of the mPMT origins. z-axis coincides with that of the mPMTs.
+    # Ordering of MPTs spirals with +phi.
+
+    iwcd_bottom_mpmts = []
+
+    # Start with 4 mPMTs around the centre of bottom
+    offsets = []
+
+    offs_x = [-iwcd_tb_pitch / 2 - iwcd_bot_centre_extra_x, iwcd_tb_pitch / 2 + iwcd_bot_centre_extra_x]
+    offs_y = [-iwcd_tb_pitch / 2 - iwcd_bot_centre_extra_y, iwcd_tb_pitch / 2 + iwcd_bot_centre_extra_y]
+    for i in range(4):
+        offset = [offs_x[[1, 0, 0, 1][i]], offs_y[[1, 1, 0, 0][i]], 0.]
+        offsets.append(offset)
+
+    # Next 12 mPMTs in a square around the first 4
+    offs_x = [-iwcd_tb_pitch * 3/2 - iwcd_bot_centre_extra_x, -iwcd_tb_pitch / 2 - iwcd_bot_centre_extra_x,
+                iwcd_tb_pitch / 2 + iwcd_bot_centre_extra_x, iwcd_tb_pitch * 3/2 + iwcd_bot_centre_extra_x]
+    offs_y = [-iwcd_tb_pitch * 3/2 - iwcd_bot_centre_extra_y, -iwcd_tb_pitch / 2 - iwcd_bot_centre_extra_y,
+                iwcd_tb_pitch / 2 + iwcd_bot_centre_extra_y, iwcd_tb_pitch * 3/2 + iwcd_bot_centre_extra_y]
+    for i in range(12):
+        offset = [offs_x[[3,3,2,1,0,0,0,0,1,2,3,3][i]], offs_y[[2,3,3,3,3,2,1,0,0,0,0,1][i]], 0.]
+        offsets.append(offset)
+
+    # Next 20 mPMTs in a larger square around the first 16
+    offs_x = [-iwcd_tb_pitch * 5/2 - iwcd_bot_centre_extra_x, -iwcd_tb_pitch * 3/2 - iwcd_bot_centre_extra_x,
+                -iwcd_tb_pitch / 2 - iwcd_bot_centre_extra_x,
+                iwcd_tb_pitch / 2 + iwcd_bot_centre_extra_x, iwcd_tb_pitch * 3/2 + iwcd_bot_centre_extra_x,
+                iwcd_tb_pitch * 5/2 + iwcd_bot_centre_extra_x]
+    offs_y = [-iwcd_tb_pitch * 5/2 - iwcd_bot_centre_extra_y, -iwcd_tb_pitch * 3/2 - iwcd_bot_centre_extra_y,
+                -iwcd_tb_pitch / 2 - iwcd_bot_centre_extra_y,
+                iwcd_tb_pitch / 2 + iwcd_bot_centre_extra_y, iwcd_tb_pitch * 3/2 + iwcd_bot_centre_extra_y,
+                iwcd_tb_pitch * 5/2 + iwcd_bot_centre_extra_y]
+    for i in range(20):
+        offset = [offs_x[[5,5,5,4,3,2,1,0,0,0,0,0,0,1,2,3,4,5,5,5][i]],
+                  offs_y[[3,4,5,5,5,5,5,5,4,3,2,1,0,0,0,0,0,0,1,2][i]], 0.]
+        offsets.append(offset)
+
+    # Next there are 4 sets of 4 mPMTs in a partially completed square around the first 36
+    offs_x = [-iwcd_tb_pitch * 7/2 - iwcd_bot_centre_extra_x, -iwcd_tb_pitch * 3/2 - iwcd_bot_centre_extra_x,
+                -iwcd_tb_pitch / 2 - iwcd_bot_centre_extra_x, iwcd_tb_pitch / 2 + iwcd_bot_centre_extra_x,
+                iwcd_tb_pitch * 3/2 + iwcd_bot_centre_extra_x, iwcd_tb_pitch * 7/2 + iwcd_bot_centre_extra_x]
+    offs_y = [-iwcd_tb_pitch * 7/2 - iwcd_bot_centre_extra_y, -iwcd_tb_pitch * 3/2 - iwcd_bot_centre_extra_y,
+                -iwcd_tb_pitch / 2 - iwcd_bot_centre_extra_y, iwcd_tb_pitch / 2 + iwcd_bot_centre_extra_y,
+                iwcd_tb_pitch * 3/2 + iwcd_bot_centre_extra_y, iwcd_tb_pitch * 7/2 + iwcd_bot_centre_extra_y]
+    for i in range(16):
+        offset = [offs_x[[5,5,4,3,2,1,0,0,0,0,1,2,3,4,5,5][i]],
+                  offs_y[[3,4,5,5,5,5,4,3,2,1,0,0,0,0,1,2][i]], 0.]
+        offsets.append(offset)
+
+    # rotate mPMTs to put feed-throughs in correct orientations... pi multiplier starting at #0
+    #y_rots = [0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0]
+    #y_rots = [0.5, 0.5, 0.5, 1.5, 1.5, 1.5, 1.5, 1.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 0.5, 0.5]
+
+    y_rots = [0] * len(offsets)
+
+    for i, (offset, y_rot) in enumerate(zip(offsets, y_rots)):
+        location = offset.copy()
+        iwcd_bottom_mpmts.append({
+            'kind': 'ME',
+            'loc': location,
+            'loc_sig': loc_sig,
+            'rot_axes': 'ZYX',
+            'rot_angles': [(y_rot + 0.5) * np.pi, 0., 0.],
+            'rot_angles_sig': [rot_angle_sig] * 3
+        })
+
+    devices_design['iwcd_bottom'] = iwcd_bottom_mpmts
+
+    # Top IWCD super module:
+    #######################
+    # Defined with the mPMTs z-axes pointing downwards, unlike the bottom super module.
+    # Second mPMT is displaced along SM +x axis.
+
+    iwcd_top_mpmts = []
+
+    # as built:
+    #y_rots = [0, 0.5, 0.5, 1.5, 1.5, 1.5, 0., 1.5, 0.5, 0.5, 0.5, 0.5, 1.5, 1.5, 0., 1.5, 1.5, 1.5, 1.5, 0.5, 0.5]
+    y_rots = [0] * len(offsets)
+
+    for offset, y_rot in zip(offsets, y_rots):
+        location = offset
+        iwcd_top_mpmts.append({
+            'kind': 'ME',
+            'loc': location,
+            'loc_sig': loc_sig,
+            'rot_axes': 'ZYX',
+            'rot_angles': [(y_rot - 0.5) * np.pi, np.pi, 0.],
+            'rot_angles_sig': [rot_angle_sig] * 3
+        })
+
+    devices_design['iwcd_top'] = iwcd_top_mpmts
+
+    # IWCD Barrel super module:
+    ##########################
+    # Origin on cylinder axis, z-axis along that axis, z=0 at midpoint of the bottom and top rows of
+    # mPMTs. Ordering of mPMTs increases with phi.
+
+    iwcd_smb_ys = [-325, 571.5] # mm y coordinates of the two columns of mPMTs in the barrel supermodule
+    iwcd_barrel_mpmts = []
+
+    n_col = 12 # number of barrel supermodules in the IWCD barrel
+    for i_row in range(11):
+        n_gaps = [0,0,0,1,1,1,2,2,2,3,3][i_row] # number of gaps in the row of mPMTs (between supermodules)
+        z = iwcd_barrel_z0 + i_row * iwcd_barrel_vertical_pitch_11 + n_gaps * iwcd_barrel_vertical_pitch_extra
+        for j_col in range(n_col):
+            for iloc in range(2):
+                loc = [iwcd_diameter / 2., iwcd_smb_ys[iloc], z]
+                phi_angle = 2. * np.pi * j_col / n_col
+                rot_phi = Rotation.from_euler('Z', phi_angle)
+                rot_loc = rot_phi.apply(loc)
+                # rotations of the normal defined by 3 extrinsic rotations
+                rot_angles = [np.pi, np.pi / 2., -phi_angle]
+                iwcd_barrel_mpmts.append({'kind': 'ME',
+                                     'loc': rot_loc,
+                                     'loc_sig': loc_sig,
+                                     'rot_axes': 'ZYX',
+                                     'rot_angles': rot_angles,
+                                     'rot_angles_sig': [rot_angle_sig] * 3})
+
+    devices_design['iwcd_barrel'] = iwcd_barrel_mpmts
+
     def __init__(self, name, container=None, kind='SSM', place_design={}, place_true={}, device_type=MPMT):
         super().__init__(SM, name, container, kind, place_design, place_true)
 
