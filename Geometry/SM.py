@@ -360,7 +360,7 @@ class SM(Device):
     # Top IWCD super module:
     #######################
     # Defined with the mPMTs z-axes pointing downwards, unlike the bottom super module.
-    # Second mPMT is displaced along SM +x axis.
+    # Fifth mPMT is displaced along SM +x axis.
 
     iwcd_top_mpmts = []
 
@@ -385,30 +385,42 @@ class SM(Device):
     ##########################
     # Origin on cylinder axis, z-axis along that axis, z=0 at midpoint of the bottom and top rows of
     # mPMTs. Ordering of mPMTs increases with phi.
+    # Consider a staggered pattern of mPMTs to compare performance
 
     iwcd_smb_ys = [-325, 571.5] # mm y coordinates of the two columns of mPMTs in the barrel supermodule
-    iwcd_barrel_mpmts = []
+    for barrel_name in ['iwcd_barrel', 'iwcd_barrel_staggered', 'iwcd_barrel_10row']:
+        iwcd_barrel_vertical_pitch = iwcd_barrel_vertical_pitch_11
+        n_row = 11
+        n_gap_pattern = [0,0,0,1,1,1,2,2,2,3,3] # number of gaps in the row of mPMTs (between supermodules)
+        if barrel_name == 'iwcd_barrel_10row':
+            iwcd_barrel_vertical_pitch = iwcd_barrel_vertical_pitch_10
+            n_row = 10
+            n_gap_pattern = [0,0,1,1,1,2,2,2,3,3] # number of gaps in the row of mPMTs (between supermodules)
 
-    n_col = 12 # number of barrel supermodules in the IWCD barrel
-    for i_row in range(11):
-        n_gaps = [0,0,0,1,1,1,2,2,2,3,3][i_row] # number of gaps in the row of mPMTs (between supermodules)
-        z = iwcd_barrel_z0 + i_row * iwcd_barrel_vertical_pitch_11 + n_gaps * iwcd_barrel_vertical_pitch_extra
-        for j_col in range(n_col):
-            for iloc in range(2):
-                loc = [iwcd_diameter / 2., iwcd_smb_ys[iloc], z]
-                phi_angle = 2. * np.pi * j_col / n_col
-                rot_phi = Rotation.from_euler('Z', phi_angle)
-                rot_loc = rot_phi.apply(loc)
-                # rotations of the normal defined by 3 extrinsic rotations
-                rot_angles = [np.pi, np.pi / 2., -phi_angle]
-                iwcd_barrel_mpmts.append({'kind': 'ME',
-                                     'loc': rot_loc,
-                                     'loc_sig': loc_sig,
-                                     'rot_axes': 'ZYX',
-                                     'rot_angles': rot_angles,
-                                     'rot_angles_sig': [rot_angle_sig] * 3})
+        iwcd_barrel_mpmts = []
 
-    devices_design['iwcd_barrel'] = iwcd_barrel_mpmts
+        n_col = 12 # number of barrel supermodules in the IWCD barrel
+        for i_row in range(n_row):
+            n_gaps = n_gap_pattern[i_row] # number of gaps in the row of mPMTs (between supermodules)
+            z = iwcd_barrel_z0 + i_row * iwcd_barrel_vertical_pitch + n_gaps * iwcd_barrel_vertical_pitch_extra
+            for j_col in range(n_col):
+                for iloc in range(2):
+                    loc = [iwcd_diameter / 2., iwcd_smb_ys[iloc], z]
+                    if barrel_name == 'iwcd_barrel_staggered' and i_row%2 == 1:
+                        loc[1] = -iwcd_smb_ys[1-iloc]
+                    phi_angle = 2. * np.pi * j_col / n_col
+                    rot_phi = Rotation.from_euler('Z', phi_angle)
+                    rot_loc = rot_phi.apply(loc)
+                    # rotations of the normal defined by 3 extrinsic rotations
+                    rot_angles = [np.pi, np.pi / 2., -phi_angle]
+                    iwcd_barrel_mpmts.append({'kind': 'ME',
+                                         'loc': rot_loc,
+                                         'loc_sig': loc_sig,
+                                         'rot_axes': 'ZYX',
+                                         'rot_angles': rot_angles,
+                                         'rot_angles_sig': [rot_angle_sig] * 3})
+
+        devices_design[barrel_name] = iwcd_barrel_mpmts
 
     def __init__(self, name, container=None, kind='SSM', place_design={}, place_true={}, device_type=MPMT):
         super().__init__(SM, name, container, kind, place_design, place_true)

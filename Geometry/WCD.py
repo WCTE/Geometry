@@ -194,53 +194,56 @@ class WCD(Device):
     # IWCD
     ######
 
-    iwcd_design_mean = def_design_mean.copy()
-    iwcd_design_scale = def_design_scale.copy()
-    iwcd_design_var = def_design_var.copy()
+    for iwcd_name, iwcd_barrel_name in zip(['IWCD','IWCD_staggered','IWCD_10row'],
+                                           ['iwcd_barrel','iwcd_barrel_staggered','iwcd_barrel_10row']):
 
-    design_mean['IWCD'] = iwcd_design_mean
-    design_scale['IWCD'] = iwcd_design_scale
-    design_var['IWCD'] = iwcd_design_var
+        iwcd_design_mean = def_design_mean.copy()
+        iwcd_design_scale = def_design_scale.copy()
+        iwcd_design_var = def_design_var.copy()
 
-    # The IWCD has 4 rows of barrel mPMTs, with the beam window on the second row from bottom
-    # Use the centre of the beam window as the height, y = 0
-    # Separation of top and bottom = 3060.475 mm
-    # iwcd_bottom: -1 * (half of mPMT baseplate width + barrel_vertical_pitch + 261.475 mm) = -(528/2. + 580 + 261.475)
-    # iwcd_top: half of mPMT baseplate width + 2*barrel_vertical_pitch + 531 mm = 528/2. + 2*580 + 531 = 1955 mm
+        design_mean[iwcd_name] = iwcd_design_mean
+        design_scale[iwcd_name] = iwcd_design_scale
+        design_var[iwcd_name] = iwcd_design_var
 
-    iwcd_bottom_y = -3615 - 687.47  # mm y coordinate of mPMT base plates on bottom endcap
-    iwcd_top_y = iwcd_bottom_y + 8481.13  # mm y coordinate of mPMT base plates on top endcap
+        # The IWCD has 4 rows of barrel mPMTs, with the beam window on the second row from bottom
+        # Use the centre of the beam window as the height, y = 0
+        # Separation of top and bottom = 3060.475 mm
+        # iwcd_bottom: -1 * (half of mPMT baseplate width + barrel_vertical_pitch + 261.475 mm) = -(528/2. + 580 + 261.475)
+        # iwcd_top: half of mPMT baseplate width + 2*barrel_vertical_pitch + 531 mm = 528/2. + 2*580 + 531 = 1955 mm
 
-    loc_sig = [5.0, 5.0, 5.0]  # mm positioning accuracy
-    rot_angles_sig = [0.05, 0.05, 0.05]  # rad rotational angle positioning accuracy
+        iwcd_bottom_y = -3615 - 687.47  # mm y coordinate of mPMT base plates on bottom endcap
+        iwcd_top_y = iwcd_bottom_y + 8481.13  # mm y coordinate of mPMT base plates on top endcap
 
-    iwcd_sms = []
+        loc_sig = [5.0, 5.0, 5.0]  # mm positioning accuracy
+        rot_angles_sig = [0.05, 0.05, 0.05]  # rad rotational angle positioning accuracy
 
-    iwcd_sms.append({'name': 'iwcd_bottom', 'kind': 'iwcd_bottom',
-                     'loc': [0., iwcd_bottom_y, 0.],
-                     'loc_sig': loc_sig,
-                     'rot_axes': 'ZYX',
-                     'rot_angles': [-np.pi / 2., -np.pi / 2., 0.],
-                     'rot_angles_sig': rot_angles_sig})
+        iwcd_sms = []
 
-    iwcd_sms.append({'name': 'iwcd_barrel', 'kind': 'iwcd_barrel',
-                     'loc': [0., 0., 0.],
-                     'loc_sig': loc_sig,
-                     'rot_axes': 'ZYX',
-                     'rot_angles': [-np.pi / 2., -np.pi / 2., 0.],
-                     'rot_angles_sig': rot_angles_sig})
+        iwcd_sms.append({'name': 'iwcd_bottom', 'kind': 'iwcd_bottom',
+                         'loc': [0., iwcd_bottom_y, 0.],
+                         'loc_sig': loc_sig,
+                         'rot_axes': 'ZYX',
+                         'rot_angles': [-np.pi / 2., -np.pi / 2., 0.],
+                         'rot_angles_sig': rot_angles_sig})
 
-    iwcd_sms.append({'name': 'iwcd_top', 'kind': 'iwcd_top',
-                     'loc': [0., iwcd_top_y, 0.],
-                     'loc_sig': loc_sig,
-                     'rot_axes': 'ZYX',
-                     'rot_angles': [-np.pi / 2., -np.pi / 2., 0.],
-                     'rot_angles_sig': rot_angles_sig})
+        iwcd_sms.append({'name': iwcd_barrel_name, 'kind': iwcd_barrel_name,
+                         'loc': [0., 0., 0.],
+                         'loc_sig': loc_sig,
+                         'rot_axes': 'ZYX',
+                         'rot_angles': [-np.pi / 2., -np.pi / 2., 0.],
+                         'rot_angles_sig': rot_angles_sig})
 
-    sms_design['IWCD'] = iwcd_sms
+        iwcd_sms.append({'name': 'iwcd_top', 'kind': 'iwcd_top',
+                         'loc': [0., iwcd_top_y, 0.],
+                         'loc_sig': loc_sig,
+                         'rot_axes': 'ZYX',
+                         'rot_angles': [-np.pi / 2., -np.pi / 2., 0.],
+                         'rot_angles_sig': rot_angles_sig})
 
-    # Add a beacon (laser ball for example)
-    calibs_design['IWCD'] = def_calibs
+        sms_design[iwcd_name] = iwcd_sms
+
+        # Add a beacon (laser ball for example)
+        calibs_design[iwcd_name] = def_calibs
 
 
     def __init__(self, name, container=None, kind='WCTE', place_design={}, place_true={}, device_type=SM):
