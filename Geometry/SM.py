@@ -408,7 +408,7 @@ class SM(Device):
                     loc = [iwcd_diameter / 2., iwcd_smb_ys[iloc], z]
                     if barrel_name == 'iwcd_barrel_staggered' and i_row%2 == 1:
                         loc[1] = -iwcd_smb_ys[1-iloc]
-                    phi_angle = 2. * np.pi * j_col / n_col
+                    phi_angle = 2. * np.pi * j_col / n_col + np.pi/12 # fix incorrect rotation of supermodules
                     rot_phi = Rotation.from_euler('Z', phi_angle)
                     rot_loc = rot_phi.apply(loc)
                     # rotations of the normal defined by 3 extrinsic rotations
