@@ -11,6 +11,7 @@ The table below shows the active elements, which are classes that inherit from t
 | Class | Device                                | Kinds currently implemented                                                 |
 |:------|:--------------------------------------|:----------------------------------------------------------------------------|
 | HALL  | Hall                                  | wcte_bldg157 - defines coordinate system of hall or survey containing a WCD |
+|       |                                       | wcte_t9 - defines a modified T9 coordinate system                           |
 | WCD   | Water Cherenkov Detector              | WCTE: full detector                                                         |
 | SM    | Super Module (several mPMTs combined) | SSM: simple super module as basis of mPMT test setup                        |
 |       |                                       | bottom, top, barrel : super modules that make up the WCTE                   |
@@ -133,6 +134,18 @@ as the first (and only) WCD object.
     >>> wcte = wcte_bldg157.wcds[0]
     >>> pmt_43_1 = wcte.mpmts[43].pmts[1]
 ```
+
+Survey data was collected from the fiducial points on the mPMT baseplates at the top of the WCTE prior to tank closure.
+These data were used to determine the as-built placements of the mPMTs in a modified T9 coordinate system. 
+The CERN T9 coordinate system uses (X,Y,Z), with X along the beam direction, Z vertical, and Y to complete a 
+right-handed system. The modified T9 coordinate system follows WCTE convention of having z along the beam direction, 
+y vertical, and x to complete a right-handed system. In addition, the X (aka z) is shifted by -9805 mm so that
+z=0 is near the centre of WCTE. The nominal beam direction is therefore along z axis in this modified T9 coordinate system.
+
+The as-built placements of the mPMTs in the modified T9 coordinate system is defined in the `wcte_t9.geo` HALL object 
+in the examples folder. In that coordinate system the center of the beam pipe window (water facing surface) is located
+at (0.8, 17.8, -1354.4). Note that in this coordinate system, the second row of mPMTs (mPMTs 37-52) is shifted up about
+40 mm. The nominal beam centre is therefore about 22 mm below the centers of the mPMTs in the second row.
 
 To access the as-built placements of the mPMTs for other programming languages, save the geometry information in a json
 file:
